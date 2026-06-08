@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>康采銷售助手</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+:root {
+  --primary:#2E7D32; --primary-light:#4CAF50; --primary-dark:#1B5E20;
+  --secondary:#FF8F00; --bg:#F5F5F5; --card:#FFF; --text:#212121;
+  --text-light:#757575; --border:#E0E0E0; --shadow:0 2px 12px rgba(0,0,0,.1);
+  --radius:16px; --nav:64px;
+}
+body { font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft JhengHei",sans-serif; background:var(--bg); color:var(--text); max-width:430px; margin:0 auto; min-height:100vh; overflow-x:hidden; }
+
+/* Header */
+.app-header { background:linear-gradient(135deg,#1B5E20,#2E7D32,#4CAF50); color:#fff; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,.2); }
+.header-left { display:flex; align-items:center; gap:10px; }
+.logo-icon { font-size:24px; }
+.app-title { font-size:17px; font-weight:700; }
+.app-subtitle { font-size:10px; opacity:.8; }
+.search-btn { font-size:22px; cursor:pointer; }
+
+/* Pages */
+.page { display:none; padding-bottom:calc(var(--nav) + 12px); min-height:calc(100vh - 56px); animation:fadeIn .2s ease; }
+.page.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none} }
+
+/* Bottom Nav */
+.bottom-nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; height:var(--nav); background:#fff; border-top:1px solid var(--border); display:flex; box-shadow:0 -2px 12px rgba(0,0,0,.08); z-index:200; }
+.nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; color:var(--text-light); transition:.2s; }
+.nav-item.active { color:var(--primary); }
+.nav-icon { font-size:22px; }
+.nav-label { font-size:10px; font-weight:600; }
+
+/* HOME */
+.hero { background:linear-gradient(135deg,#1B5E20,#2E7D32,#388E3C); color:#fff; padding:20px; margin-bottom:8px; position:relative; overflow:hidden; }
+.hero::after { content:'🌿'; position:absolute; right:-10px; bottom:-10px; font-size:100px; opacity:.12; }
+.hero-title { font-size:22px; font-weight:800; margin-bottom:6px; }
+.hero-sub { font-size:12px; opacity:.85; line-height:1.5; }
+.hero-badge { display:inline-block; background:var(--secondary); color:#fff; font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; margin-top:10px; }
+
+.section-title { font-size:12px; font-weight:700; color:var(--text-light); text-transform:uppercase; letter-spacing:.8px; padding:14px 20px 8px; }
+
+/* Category Grid */
+.cat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 16px 8px; }
+.cat-card { background:#fff; border-radius:var(--radius); padding:16px 14px; cursor:pointer; box-shadow:var(--shadow); border:2px solid transparent; position:relative; overflow:hidden; transition:.2s; }
+.cat-card:active { transform:scale(.97); }
+.cat-bar { position:absolute; left:0; top:0; bottom:0; width:4px; border-radius:4px 0 0 4px; }
+.cat-emoji { font-size:30px; display:block; margin-bottom:8px; }
+.cat-name { font-size:13px; font-weight:700; line-height:1.3; }
+.cat-count { font-size:11px; color:var(--text-light); margin-top:3px; }
+
+/* Disease CTA */
+.disease-cta { margin:0 16px 16px; background:linear-gradient(135deg,#1A237E,#3949AB); color:#fff; border-radius:var(--radius); padding:16px; display:flex; align-items:center; gap:12px; cursor:pointer; }
+.disease-cta:active { opacity:.9; }
+
+/* CATEGORY PAGE */
+.cat-page-header { padding:16px 20px 12px; background:#fff; border-bottom:1px solid var(--border); margin-bottom:10px; }
+.cat-page-title { font-size:20px; font-weight:800; }
+.cat-page-desc { font-size:12px; color:var(--text-light); margin-top:4px; line-height:1.5; }
+.product-list { padding:0 16px; display:flex; flex-direction:column; gap:12px; }
+
+/* Product Card */
+.product-card { background:#fff; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); cursor:pointer; transition:.2s; }
+.product-card:active { transform:scale(.99); }
+.product-card-img { height:160px; overflow:hidden; position:relative; background:#E8F5E9; }
+.product-card-img img { width:100%; height:100%; object-fit:cover; object-position:left center; }
+.product-card-img .img-badge { position:absolute; top:8px; right:8px; background:rgba(0,0,0,.55); color:#fff; font-size:10px; font-weight:700; padding:3px 8px; border-radius:10px; backdrop-filter:blur(4px); }
+.product-card-img .img-tag { position:absolute; top:8px; left:8px; font-size:10px; font-weight:700; padding:3px 8px; border-radius:10px; }
+.tag-veg { background:#4CAF50; color:#fff; }
+.tag-gov { background:#FF8F00; color:#fff; }
+.product-card-body { padding:12px 16px; }
+.product-card-name { font-size:15px; font-weight:700; }
+.product-card-tagline { font-size:12px; color:var(--primary); font-weight:600; margin-top:3px; }
+.product-card-target { font-size:11px; color:var(--text-light); margin-top:5px; line-height:1.4; }
+.product-card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
+.product-card-footer span { font-size:12px; color:var(--primary); font-weight:600; }
+
+/* DETAIL PAGE */
+.detail-page-img { width:100%; max-height:260px; object-fit:cover; object-position:center top; display:block; }
+.detail-back { display:flex; align-items:center; gap:6px; color:#fff; font-size:14px; font-weight:600; cursor:pointer; }
+.detail-overlay-header { position:absolute; top:0; left:0; right:0; background:linear-gradient(to bottom,rgba(0,0,0,.5),transparent); padding:14px 16px; z-index:2; }
+.detail-img-wrap { position:relative; }
+.detail-body { padding:0 16px; }
+.detail-name { font-size:21px; font-weight:800; margin-top:14px; }
+.detail-tagline { font-size:14px; color:var(--primary); font-weight:600; margin-top:3px; }
+.detail-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.detail-tag { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; }
+
+.detail-section { background:#fff; border-radius:var(--radius); padding:14px 16px; margin-top:12px; box-shadow:var(--shadow); }
+.detail-section-title { font-size:13px; font-weight:700; color:var(--primary-dark); display:flex; align-items:center; gap:6px; margin-bottom:10px; padding-bottom:8px; border-bottom:2px solid #E8F5E9; }
+.bullet { display:flex; gap:8px; margin-bottom:7px; align-items:flex-start; }
+.bullet-dot { color:var(--primary); font-size:16px; line-height:1.4; flex-shrink:0; }
+.bullet-text { font-size:13px; line-height:1.5; }
+
+.chip { display:inline-block; font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; margin:3px; }
+.chip-green { background:#E8F5E9; color:#1B5E20; }
+.chip-purple { background:#F3E5F5; color:#6A1B9A; }
+
+.sales-box { background:linear-gradient(135deg,#FFF8E1,#FFF3E0); border-left:4px solid var(--secondary); border-radius:8px; padding:11px 13px; margin-bottom:8px; }
+.sales-box p { font-size:12px; line-height:1.6; }
+.sales-label { font-size:11px; font-weight:700; color:var(--secondary); margin-bottom:3px; }
+
+.usage-box { background:#E3F2FD; border-radius:12px; padding:12px 14px; display:flex; gap:10px; align-items:flex-start; }
+.usage-text { font-size:13px; line-height:1.6; color:#1565C0; font-weight:500; }
+
+.info-row { display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--border); }
+.info-row:last-child { border-bottom:none; }
+.info-label { font-size:11px; font-weight:700; color:var(--text-light); min-width:55px; }
+.info-value { font-size:12px; line-height:1.5; flex:1; }
+
+/* SEARCH */
+.search-bar { padding:12px 16px; background:#fff; border-bottom:1px solid var(--border); position:sticky; top:56px; z-index:50; }
+.search-wrap { position:relative; }
+.search-input { width:100%; background:var(--bg); border:2px solid var(--border); border-radius:12px; padding:10px 14px 10px 40px; font-size:14px; outline:none; font-family:inherit; transition:border-color .2s; }
+.search-input:focus { border-color:var(--primary); }
+.search-icon-abs { position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:17px; color:var(--text-light); }
+.search-results { padding:12px 16px; }
+.search-empty { text-align:center; padding:40px 20px; color:var(--text-light); font-size:13px; }
+.search-item { background:#fff; border-radius:12px; padding:12px 14px; margin-bottom:9px; cursor:pointer; box-shadow:var(--shadow); display:flex; gap:10px; align-items:center; transition:.2s; }
+.search-item:active { transform:scale(.99); }
+.search-item-img { width:56px; height:56px; border-radius:10px; object-fit:cover; object-position:left; flex-shrink:0; }
+.search-item-info { flex:1; min-width:0; }
+.search-item-name { font-size:13px; font-weight:700; }
+.search-item-cat { font-size:11px; color:var(--primary); font-weight:600; margin-top:2px; }
+.search-item-target { font-size:11px; color:var(--text-light); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* DISEASE */
+.disease-hero { background:linear-gradient(135deg,#1A237E,#283593,#3949AB); color:#fff; padding:20px; margin-bottom:12px; position:relative; overflow:hidden; }
+.disease-hero::after { content:'🏥'; position:absolute; right:-10px; bottom:-10px; font-size:90px; opacity:.15; }
+.disclaimer { background:#FFF3E0; border-left:4px solid var(--secondary); padding:9px 13px; margin:0 16px 12px; border-radius:0 8px 8px 0; font-size:11px; color:#E65100; line-height:1.5; }
+.disease-card { background:#fff; border-radius:var(--radius); margin:0 16px 12px; box-shadow:var(--shadow); overflow:hidden; }
+.disease-header { display:flex; align-items:center; gap:10px; padding:13px 14px; cursor:pointer; }
+.disease-num { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:#fff; flex-shrink:0; }
+.disease-name-text { font-size:15px; font-weight:700; flex:1; }
+.disease-arrow { font-size:18px; color:var(--text-light); transition:transform .3s; }
+.disease-arrow.open { transform:rotate(90deg); }
+.disease-body { display:none; padding:0 14px 13px; border-top:1px solid var(--border); }
+.disease-body.open { display:block; animation:fadeIn .2s ease; }
+.disease-desc { font-size:12px; color:var(--text-light); line-height:1.5; padding:9px 0 6px; }
+.nutrient-title { font-size:11px; font-weight:700; margin:6px 0 5px; }
+.nutrient-grid { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
+.nc-key { background:#E8F5E9; color:#1B5E20; border:1.5px solid #A5D6A7; font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; }
+.nc-sup { background:#E3F2FD; color:#1565C0; border:1.5px solid #90CAF9; font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; }
+.avon-rec { margin-top:9px; padding-top:9px; border-top:1px dashed var(--border); }
+.avon-rec-title { font-size:11px; font-weight:700; color:var(--secondary); margin-bottom:5px; }
+.avon-chip { display:inline-block; background:linear-gradient(135deg,#FFF8E1,#FFECB3); color:#E65100; font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; margin:2px; border:1px solid #FFB300; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-left">
+    <span class="logo-icon">🌿</span>
+    <div>
+      <div class="app-title">康采銷售助手</div>
+      <div class="app-subtitle">台灣雅芳 AVON 全系列營養品</div>
+    </div>
+  </div>
+  <span class="search-btn" onclick="showSearch()">🔍</span>
+</header>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-title">康采系列<br>36款全產品介紹</div>
+    <div class="hero-sub">成分解析・銷售話術・適用對象・食用方式</div>
+    <span class="hero-badge">✦ 直銷商專用工具</span>
+  </div>
+  <div class="section-title">產品分類</div>
+  <div class="cat-grid" id="cat-grid"></div>
+  <div class="section-title">疾病保健建議</div>
+  <div class="disease-cta" onclick="showPage('disease')">
+    <span style="font-size:34px">🏥</span>
+    <div><div style="font-size:15px;font-weight:700">台灣常見疾病保健建議</div><div style="font-size:11px;opacity:.85;margin-top:2px">10大疾病 × 保健營養素建議</div></div>
+    <span style="font-size:20px;margin-left:auto">›</span>
+  </div>
+</div>
+
+<!-- CATEGORY -->
+<div id="page-category" class="page">
+  <div class="cat-page-header" id="cat-page-header"></div>
+  <div class="product-list" id="product-list"></div>
+</div>
+
+<!-- DETAIL -->
+<div id="page-detail" class="page">
+  <div id="detail-content"></div>
+</div>
+
+<!-- SEARCH -->
+<div id="page-search" class="page">
+  <div class="search-bar">
+    <div class="search-wrap">
+      <span class="search-icon-abs">🔍</span>
+      <input type="text" class="search-input" id="search-input" placeholder="搜尋產品名稱、功效、成分..." oninput="doSearch(this.value)">
+    </div>
+  </div>
+  <div class="search-results" id="search-results">
+    <div class="search-empty"><div style="font-size:44px;margin-bottom:10px">🔍</div>輸入關鍵字搜尋產品</div>
+  </div>
+</div>
+
+<!-- DISEASE -->
+<div id="page-disease" class="page">
+  <div class="disease-hero">
+    <div style="font-size:19px;font-weight:800;margin-bottom:5px">🏥 台灣常見疾病保健建議</div>
+    <div style="font-size:12px;opacity:.8;line-height:1.5">10大常見慢性病・保健營養素建議<br>協助客戶找到適合的保健方向</div>
+  </div>
+  <div class="disclaimer">⚠️ 以下為保健參考資訊，非醫療建議。如有疾病症狀請諮詢專業醫師。保健食品不能取代藥物治療。</div>
+  <div id="disease-list"></div>
+</div>
+
+<nav class="bottom-nav">
+  <div class="nav-item active" id="nav-home" onclick="showPage('home')"><span class="nav-icon">🏠</span><span class="nav-label">首頁</span></div>
+  <div class="nav-item" id="nav-search" onclick="showSearch()"><span class="nav-icon">🔍</span><span class="nav-label">搜尋</span></div>
+  <div class="nav-item" id="nav-disease" onclick="showPage('disease')"><span class="nav-icon">🏥</span><span class="nav-label">疾病建議</span></div>
+</nav>
+
+<script>
+// ══════════════════════════════
+// DATA
+// ══════════════════════════════
+const categories = [
+  { id:'immune', emoji:'🛡️', name:'免疫抗氧化', color:'#2E7D32', desc:'強化免疫防線，高效清除自由基，維持細胞年輕活力。', products:['sod200','sod150','sod100','resv'] },
+  { id:'eye',    emoji:'👁️', name:'眼睛護理',   color:'#00897B', desc:'守護黃斑部健康，舒緩眼睛疲勞，對抗藍光傷害。', products:['lutein_drink','lutein_cap'] },
+  { id:'cardio', emoji:'🫀', name:'心血管保健', color:'#E53935', desc:'維持正常血脂循環，守護心血管健康。', products:['hongqu','fish_oil','natto'] },
+  { id:'bone',   emoji:'🦴', name:'骨骼關節',   color:'#FF8F00', desc:'補充骨骼所需鈣質與維生素D，保護關節靈活。', products:['joint','calcium_drink','seaweed_ca','vit_d3'] },
+  { id:'sleep',  emoji:'😴', name:'睡眠代謝',   color:'#5C6BC0', desc:'改善睡眠品質，促進夜間代謝，幫助找回好氣色。', products:['sleeping'] },
+  { id:'vitality',emoji:'⚡',name:'活力滋補',   color:'#8D6E63', desc:'天然珍貴食材，補充元氣，提升整體活力與精神。', products:['antrodia','ganoderma','ginseng'] },
+  { id:'bvit',   emoji:'🅱️', name:'B群活力',    color:'#F57C00', desc:'補充B群維生素，消除疲勞，維持能量代謝正常。', products:['multivit','super_b','active_b'] },
+  { id:'gut',    emoji:'🦠', name:'腸道消化',   color:'#558B2F', desc:'調整腸道菌叢，促進消化吸收，維持腸道免疫力。', products:['probiotic','enzyme','fiber','milk_tea'] },
+  { id:'women',  emoji:'🌸', name:'女性保健',   color:'#E91E63', desc:'針對女性需求，維持荷爾蒙平衡、美麗與活力。', products:['berry','collagen','hyaluronic','royaljelly','soy'] },
+  { id:'men',    emoji:'💪', name:'男性保健',   color:'#1565C0', desc:'專為男性設計，提升活力能量，維持良好機能。', products:['maca','pumpkin'] },
+  { id:'weight', emoji:'🏃', name:'體重管理',   color:'#6A1B9A', desc:'高優質蛋白補充，搭配美型配方，輕鬆維持理想體態。', products:['protein_choco','protein_vanilla','black_coffee'] },
+  { id:'brain',  emoji:'🧠', name:'腦部頭髮',   color:'#37474F', desc:'活化腦細胞，增強記憶力，同時滋養頭髮健康。', products:['walnut','hair'] },
+];
+
+const products = {
+  sod200:{ id:'sod200', img:'images/page-01.png', name:'康采極緻青春飲200萬活性EX減糖版', tag:'高規防禦', tagline:'超強防禦 青春再現', cat:'immune', catName:'免疫抗氧化',
+    diet:'全素可食', usage:'早晨空腹飲用 1瓶', certBadge:'BESTSELLER',
+    badges:[{t:'全素可食',c:'tag-veg'},{t:'業界最高SOD',c:'tag-gov'}],
+    benefits:['200萬SODlike活性 挑戰業界最高量，達到微米級大小，通過專業檢驗機構認證活性高達200萬','九種菌菇多醣體加沙棘萃取物，多種珍貴菌菇，溫和調理，有助術後補養','每粒有16.4大卡，每批通過400項以上SGS檢測並通過第三方單位活性認證、安全有保障'],
+    ingredients:['200萬SODlike活性','九種菌菇多醣體','沙棘萃取物','糙米酵素'],
+    salesPitch:['您有沒有感覺最近特別容易疲勞、生病？這是免疫力在警告您！','康采200萬SOD，業界最高量！達到微米級，完整保留活性，讓SOD真正被身體利用！','每天1瓶，喝出抵抗力！用最頂級的SOD守護您和家人的健康，投資健康就是最好的投資！'],
+    target:'希望快速回復活力及青春者／需要加強保養者／生活作息不正常者／工作環境污染嚴重者／壓力大者' },
+
+  sod150:{ id:'sod150', img:'images/page-02.png', name:'康采極緻青春飲150萬活性EX減糖版', tag:'加強防線', tagline:'調整體質 加強防禦', cat:'immune', catName:'免疫抗氧化',
+    diet:'全素可食', usage:'早晨空腹飲用 1瓶', certBadge:'BESTSELLER',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['150萬SODlike活性，含9種菌菇(包含竹環菌、繡球菌等)，防護罩加持','接骨木莓萃取，遠離換季不適，富含生物黃酮素、原花青素以及多酚','刺梨+沙棘萃取物，保持好體質，刺梨富含維生素C、礦物質、沙棘'],
+    ingredients:['150萬SODlike活性','9種菌菇萃取','接骨木莓萃取','刺梨+沙棘萃取'],
+    salesPitch:['換季最怕免疫力下降！150萬SOD加強版，含接骨木莓，讓您的身體防護更全面！','相同頂級菌菇配方，濃度升級讓效果更持久，全家都適合的每日免疫加強！'],
+    target:'照顧老小的家庭主事者／三班治工作者／生活忙碌者／常接觸公共場所者' },
+
+  sod100:{ id:'sod100', img:'images/page-03.png', name:'康采極緻青春飲100萬活性', tag:'自我保護', tagline:'守護青春 莫定根基', cat:'immune', catName:'免疫抗氧化',
+    diet:'全素可食', usage:'早晨空腹飲用 1瓶', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['白樺樹菌菇萃取含百萬活性SOD，日本白樺樹菌菇含SOD量是靈芝的55倍，以獨特破壁技術萃取','雲芝菌絲體發酵液，調理好體質，含有珍貴雲芝多醣，透過透營養技術協同作用','紅石榴苷萃取，舒緩緊繃精神，源自歐洲椎木大黃，西班牙專利水萃技術保留活性成份'],
+    ingredients:['100萬SODlike活性','白樺樹菌菇萃取','雲芝菌絲體','紅石榴苷萃取'],
+    salesPitch:['第一次接觸SOD的客戶，100萬是最好的入門選擇！溫和又有效！','白樺樹菌菇萃取SOD含量是靈芝的55倍，加上雲芝菌絲體，天天喝出年輕防禦力！'],
+    target:'希望維持活力及青春者／希望調理體質者／常保活力及青春者／處於高壓環境或挑戰業務的事業者' },
+
+  resv:{ id:'resv', img:'images/page-06.png', name:'康采葡萄萃取白藜蘆醇精華', tag:'精準守護', tagline:'儲備能量 紅潤光澤', cat:'immune', catName:'免疫抗氧化',
+    diet:'全素可食', usage:'每日1包，飯後補充', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['每包含160毫克白藜蘆醇，挑戰業界最高量，通過SGS檢測每包含160毫克的白藜蘆醇和紅酒多酚','頂級原料與配方設計，鞏固活力基底，採用法國葡萄酒醱酵葡萄及13種莓果果實的維生素及植化素','專利萃取技術，均質乳劑型，高效好吸收，專利「高度均質奈米技術」，完整保留全果活性成分，粒子濃度提升2000倍'],
+    ingredients:['白藜蘆醇 160mg','13種莓果萃取','法國葡萄酒酵母','維生素C'],
+    salesPitch:['白藜蘆醇是近年最火紅的抗老成分！康采這款含量高達160mg，業界最高！','法國葡萄酒發酵技術萃取，搭配13種莓果，喝出真正的細胞年輕化！'],
+    target:'需要病後補養者／希望維持健康活力者／生活忙碌者／希望以簡單方式提升保護力者' },
+
+  lutein_drink:{ id:'lutein_drink', img:'images/page-04.png', name:'康采金盞花葉黃素玻潤飲', tag:'亮采有神', tagline:'黃金升級配方 水亮晶潤', cat:'eye', catName:'眼睛護理',
+    diet:'全素可食', usage:'每日1包，飯後補充', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['游離型葉黃素20mg+玉米黃素4mg 黃金配方，美國國家衛生研究院(NIH)證實5:1為最完美比例，持續補充完整守護亮采','高純度萃取玻尿酸10mg，維持潤澤超有感，符合人體吸收的95%玻尿酸，穩定性高','紅藻萃取日本專利蝦紅素，專注目標不費力，6毫克專利蝦紅素，守護調節舒適超有感'],
+    ingredients:['游離型葉黃素 20mg','玉米黃素 4mg','玻尿酸 10mg','蝦紅素 6mg','黑醋栗+紐西蘭黑莓'],
+    salesPitch:['現代人每天盯螢幕超過9小時！眼睛已在無聲吶喊SOS！','康采葉黃素玻潤飲黃金比例20mg葉黃素＋玻尿酸＋蝦紅素，全方位眼部保養一包搞定！','游離型吸收率比一般酯化型高40%！喝的保養比吃的藥錠更快更有感！'],
+    target:'長時間盯螢幕的上班族／需要加強保養眼睛族群／熱愛追劇玩電玩的3C族／長期K書的學生族' },
+
+  lutein_cap:{ id:'lutein_cap', img:'images/page-05.png', name:'康采金盞花萃取葉黃素膠囊', tag:'舒適水潤', tagline:'水潤晶亮 亮采有感', cat:'eye', catName:'眼睛護理',
+    diet:'全素可食', usage:'每日2顆，飯後補充', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['游離型葉黃素，達衛福部公告最高劑量，2顆可達衛福部公告最高劑量30mg，吸收率提升23%，維持舒適水潤','超級食物 黑醋栗萃取，維持舒適超有神，每300克黑醋栗只能萃取出1公斤的花青素，珍稀貴貴','完整7大優勢複方，全方位守護，涵蓋山桑子、小米草、枸杞、維生素C、維生素E、礦物質硒、葡萄糖酸鋅等優勢複方'],
+    ingredients:['游離型葉黃素 30mg','玉米黃素','黑醋栗萃取','山桑子、枸杞'],
+    salesPitch:['葉黃素是眼睛黃斑部的「防彈衣」！人體無法自行合成，一定要每日補充！','每日2顆達到衛福部公告最高劑量30mg，一次補足眼睛所需，經濟又實惠！'],
+    target:'長時間使用3C者／熱愛追劇玩電玩的3C族／長期K書的學生族／針對健康高度關心者' },
+
+  hongqu:{ id:'hongqu', img:'images/page-14.png', name:'康采紅麴膠囊', tag:'降膽固醇', tagline:'國家認證 健康食品', cat:'cardio', catName:'心血管保健',
+    diet:'葷食', usage:'每日1顆，午餐或晚餐後食用', certBadge:'國家認證',
+    badges:[{t:'國家健康食品認證',c:'tag-gov'},{t:'國家品質標章',c:'tag-gov'}],
+    benefits:['國家健康食品認證 有助降低總膽固醇，Monacolin-K為紅麴保健功效性的活性成分，天然發酵紅麴種每顆含5.25毫克Monacolin-K，通過國家健康食品品審格查審','擁有國家品質標章 安全與品質的認證，嚴選台灣本土生產的優質紅麴，不含黃麴毒素，通過國家委員會嚴格審查','榮獲國家健康食品認證，榮獲國家品質標章，雙重國家級認證保障'],
+    ingredients:['Monacolin-K 5.25mg','天然發酵紅麴','不含黃麴毒素','台灣本土優質紅麴'],
+    salesPitch:['台灣每3人就有1人膽固醇偏高！長期應酬、精緻飲食、缺乏運動，都是高膽固醇的原因！','康采紅麴膠囊是台灣唯一同時獲得「國家健康食品認證」和「國家品質標章」雙重認證的紅麴！','每顆含Monacolin-K 5.25mg，天然有效又安全，長期食用無負擔！帶給家人心血管最安心的守護！'],
+    target:'喜愛精緻美食者／經常應酬大吃大喝者／想要提升循環代謝者' },
+
+  fish_oil:{ id:'fish_oil', img:'images/page-15.png', name:'康采高濃度魚油沙棘Plus', tag:'循環順暢', tagline:'高效清淨 暢通護航', cat:'cardio', catName:'心血管保健',
+    diet:'葷食', usage:'每日2顆，飯後食用', certBadge:'IFOS 5星認證',
+    badges:[{t:'IFOS最高5星',c:'tag-gov'}],
+    benefits:['高濃度85% 純淨海域萃取，有效調理循環，每天2顆含有969毫克，小顆好吞服，可達循環福部建議攝取標準，黃金比例3(EPA):2(DHA)','採用SPD短程萃餾技術的rTG型魚油，穩定活性，標準奪溫度、壓力、時間的SPD技術，可以保留rTG型魚油的活性與新鮮度','添加沙棘果油可協助魚油促進新陳代謝，沙棘是世界公認的「超級漿果」，協同魚油促進循環代謝'],
+    ingredients:['rTG型魚油 EPA+DHA 85%','EPA:DHA = 3:2 黃金比例','沙棘果油','維生素E'],
+    salesPitch:['Omega-3魚油是心血管保健最基礎的選擇！但魚油品質差很多！','康采高濃度魚油沙棘Plus，採用rTG型魚油（吸收率比一般魚油高50%），IFOS最高5星認證！','加上沙棘果油協同作用，保護心血管、維持好循環，銀髮族、三高族必備！'],
+    target:'銀髮族／外食者／常吃重口味油炸食物者／三高族群' },
+
+  natto:{ id:'natto', img:'images/page-16.png', name:'康采日本納豆膠囊', tag:'淨化堆積', tagline:'體內清淨 減少堆積', cat:'cardio', catName:'心血管保健',
+    diet:'植物五辛素', usage:'每日1顆，餐後或睡前食用', certBadge:'',
+    badges:[{t:'植物五辛素',c:'tag-veg'}],
+    benefits:['5000FU日本納豆激酶，挑戰業界最高量，挑戰日本製作納豆激酶，活性高達5000FU，不含菌草，去除異味，幫助減少堆積，促進體內清淨','日本青森縣大蒜萃取，活性高 去除辛辣殘臭，嚴選日本青森6科種黑蒜，活性量是白蒜的10倍，以專利破壁特殊製程處理，去除辛辣與殘臭，強化體內淨化代謝','具檢驗報告 優質菌種與專業製程，優質菌種經過專業特殊製程，避免食品與藥物交互作用，同時增加食用安全性'],
+    ingredients:['納豆激酶 5000FU','日本青森黑蒜萃取 10倍活性','卵磷脂','維生素K2'],
+    salesPitch:['血液循環不好、手腳冰冷、容易疲勞？體內廢棄物堆積是關鍵！','康采日本納豆膠囊，5000FU業界最高活性納豆激酶，加上日本青森黑蒜，體內環保一起來！','外食族、生活作息不正常、代謝不良的中年人，這款是你的最佳選擇！'],
+    target:'外食族／生活作息不正常者／代謝不良者／中年以上者' },
+
+  sleeping:{ id:'sleeping', img:'images/page-13.png', name:'康采睡美人胺基酸粉', tag:'沉穩入睡', tagline:'啟動夜間代謝力', cat:'sleep', catName:'睡眠代謝',
+    diet:'全素可食', usage:'一般保養：每日1包；加強保養：每日2包，晚餐後或睡前食用', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['添加1200毫克胺基酸，維持生理機能，胺基酸是幫助睡眠、啟動夜代代謝的重要因子，高效劑量1200毫克23種優質來源足量胺基酸','GABA+茶胺酸+百香果萃取物，幫助入睡：糙米發酵物(含50毫克GABA)幫助安定、放鬆、舒壓，提升良好睡眠品質；茶胺酸+百香果萃取物，幫助深度休息','低糖配方少負擔，外出也能好眠好氣色，相橘口味低糖配方，好吃又減輕負擔，粉包劑型攜帶方便'],
+    ingredients:['胺基酸 1200mg（23種）','GABA 50mg（糙米發酵）','茶胺酸（L-Theanine）','百香果萃取物'],
+    salesPitch:['睡不好是現代人最大的健康隱憂！失眠、淺眠、不易入睡，影響隔天精神和代謝！','康采睡美人胺基酸粉，GABA+茶胺酸+百香果，科學配方幫助你沉穩入睡，同時啟動夜間黃金代謝！','低糖好喝、全素可食、粉包好攜帶，讓你不管在哪裡都能睡得好！送給在乎睡眠品質的她！'],
+    target:'希望有良好睡眠品質者／希望氣色佳者／壓力大需要放鬆者／想促進夜間代謝者' },
+
+  antrodia:{ id:'antrodia', img:'images/page-10.png', name:'康采頂級牛樟芝精華飲EX減糖版', tag:'遠離甘苦', tagline:'滋補強身 彩色人生', cat:'vitality', catName:'活力滋補',
+    diet:'全素可食', usage:'一般保養：早晚餐後各1包；加強保養：早、午餐後各1包', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['頂級牛樟芝高效比例，挑戰業界飲品最高量，頂品含有完全合成生牛樟芝DNA的頂級牛樟芝，多醣體25%(104.7mg)＋三萜類12%(50.2mg)，純正滋補，提振精神','子實體＋菌絲體雙相互增功效，完整複方功效，領先業界的雙相萃取技術，有效增加多醣體與三萜類含量','多重複方成分(牛磺酸、D-核糖、蟲草草、五味子、枸杞、黃薑)，體感更明顯 強化代謝，蟲草草萃取含有蟲草素，搭配富含類黃酮及木酚素的五味子'],
+    ingredients:['牛樟芝多醣體 25%（104.7mg）','三萜類 12%（50.2mg）','D-核糖','蟲草素、牛磺酸'],
+    salesPitch:['台灣之寶牛樟芝！業界最頂級的飲品配方，雙相萃取讓多醣體和三萜類同時達到最高含量！','您是家庭兩頭燒的上班族、工作「操」入睡眠不足的夜貓族、年輕指數過高的事業者，牛樟芝就是你的最佳夥伴！'],
+    target:'家庭兩頭燒的上班族／工作「操」入睡眠不足的夜貓族／身處高壓爭環境或挑戰業務的事業者' },
+
+  ganoderma:{ id:'ganoderma', img:'images/page-11.png', name:'康采樟芝靈芝王菌絲體膠囊', tag:'芝助提神', tagline:'雙芝相助 戰力旺盛', cat:'vitality', catName:'活力滋補',
+    diet:'全素可食', usage:'一般保養：早餐後2顆；加強保養：早、午餐後各2顆', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['高含量樟芝菌絲體，維持戰鬥力，高含量多醣體、三萜類等有益人體成分，每顆含量300毫克，每天4顆達到有效劑量，幫助養護，維持戰鬥力','嚴選高品質靈芝菌絲體，提升續航力，使用純正靈芝王「赤芝」重種優質培養，透過低溫乾燥技術萃取，涵蓋10%多醣體，提升戰力持久度','五味子萃取＋複合B群，從根本維持能量，五味子含多種有益成分，有內代外代謝體積累的食效，添加B1、B2、B6等成分，全面持能量滿滿'],
+    ingredients:['牛樟芝菌絲體 300mg','靈芝多醣體 10%','五味子萃取','複合維生素B群'],
+    salesPitch:['靈芝是東方最古老的珍貴保健食材！康采靈芝王含有牛樟芝＋靈芝雙配方，加上五味子，元氣倍增！','每天工作超時、精神不濟、體力透支？雙芝相助，讓你重獲戰力，活力充沛！'],
+    target:'勞力密集一線人員／常加班熬夜者／壓力大的人／想調整整體體質的人' },
+
+  ginseng:{ id:'ginseng', img:'images/page-12.png', name:'康采頂級活人蔘精華飲EX減糖版', tag:'益氣強身', tagline:'三蔘合一 氣順舒心', cat:'vitality', catName:'活力滋補',
+    diet:'全素可食', usage:'一般保養：早餐後1包；加強保養：早、午餐後各1包', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['50毫克人蔘皂苷，固氣有力 維持健康，人蔘中的人蔘皂苷是主要活性成分，可協助養分合理運送至全身，購買標示清楚且已經過SGS檢測的產品更有保障','韓國紅薑＋鮮人蔘＋丹蔘，協同調理 溫和滋養，韓國高麗紅薑加速補養，薑的種類多多，吸收率更高；丹蔘順脈，已逾6年長白山鮮人蔘，專利萃取技術保留原始活性與珍真生物效用','丹蔘順脈，真實濃縮萃取保留原始活性高率，促進氣血循環暢通，包含5大益草本的協同作用'],
+    ingredients:['人蔘皂苷 50mg','韓國高麗紅薑','丹蔘萃取','長白山鮮人蔘'],
+    salesPitch:['人蔘是千年滋補聖品！康采級活人蔘精華飲，融合三種人蔘精華，讓補氣更全面更有效！','氣不夠、精神差、容易疲勞？三蔘合一，給你由內而外的充沛元氣！適合全家補氣養生！'],
+    target:'氣不夠、體虛不佳者／氣疲易累者／想滋補強健維持健康者／想要中氣十足、元氣滿滿者' },
+
+  joint:{ id:'joint', img:'images/page-19.png', name:'康采優捷強化錠', tag:'靈活軟Q', tagline:'舒適踏實 穩健自在', cat:'bone', catName:'骨骼關節',
+    diet:'葷食', usage:'每日1錠，飯後食用', certBadge:'',
+    badges:[],
+    benefits:['足量專利型UCII，保留活性 舒適有感，實驗證實UCII的靈活效果比葡萄糖胺+軟骨素高3.4倍，40毫克元UCII，非變性第二型膠原蛋白，專利回春萃取，保留完整靈活生軟骨結構','第二型水解膠原蛋白，提升靈活與軟Q度，80毫克水解膠原蛋白，萃取自超好海洋中，含軟骨素及玻尿酸，補足流失養養，靈活軟Q超有感','維生素C能促進膠原蛋白生成，維持穩健'],
+    ingredients:['非變性第二型膠原蛋白 UCII 40mg','水解膠原蛋白 80mg','玻尿酸','維生素C'],
+    salesPitch:['膝蓋不舒服、蹲下爬起費力、爬樓梯困難？關節問題一定要積極保養！','康采優捷強化錠含UCII！效果比葡萄糖胺＋軟骨素高3.4倍，讓你重回靈活自在！','中老年人、運動愛好者、常背重物的女性，每天一錠，舒適踏實！'],
+    target:'中老年族群／銀髮族／運動量大者／常穿高跟鞋的女性／經常背重物者' },
+
+  calcium_drink:{ id:'calcium_drink', img:'images/page-21.png', name:'康采液態檸檬高鈣飲', tag:'補鈣顧骨氣', tagline:'強化吸收 顧本勇健', cat:'bone', catName:'骨骼關節',
+    diet:'奶素可食', usage:'每日1包，晚餐後或睡前食用', certBadge:'',
+    badges:[{t:'奶素可食',c:'tag-veg'}],
+    benefits:['高鈣：1包800毫克檸檬酸鈣含量，德國來源，高吸收率檸檬酸鈣，挑戰業界液態鈣最高量，每包添加800毫克鈣離子，維持骨骼發育與健康','高效：CPP、維生素D3、K，鎂等提高吸收利用，維生素D3與鈣離子結合，促進腸胃道鈣質吸收，維生素D3、K與鎂等可同時補充，有助於維持骨骼的正常發育','高速：重利萃取奈米液態型式，更好吸收，液態劑型可快速吸收，適合追求方便快速、不擔長吞者'],
+    ingredients:['檸檬酸鈣 800mg','維生素D3','維生素K2','CPP（酪蛋白磷酸肽）','鎂'],
+    salesPitch:['台灣人普遍鈣質攝取不足！液態檸檬酸鈣吸收率遠優於一般碳酸鈣！','每包800mg高鈣，加上D3+K2+鎂協同作用，讓鈣真正進入骨骼，不只補鈣還要補對！','懷孕媽媽、發育青少年、預防骨鬆的銀髮族，液態好吞服，一包解決所有鈣質需求！'],
+    target:'不愛粉狀錠狀產品者／發育青少年／需要補充鈣質的孕婦／預防骨質流失的成年人' },
+
+  seaweed_ca:{ id:'seaweed_ca', img:'images/page-22.png', name:'康采海藻鈣錠', tag:'活力灌鈣', tagline:'速崩劑型 強化骨氣', cat:'bone', catName:'骨骼關節',
+    diet:'全素可食', usage:'一般：一天2顆；加強保養：一天4顆，晚餐後或睡前食用', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['2顆500毫克鈣，天然海藻鈣來源，萃取自紅色海藻的天然鈣，富含礦物質鈣、銅、鋅、矽，2顆等於補充500毫克牛奶的含鈣量','維生素D助好吸收，協同作用效果好，維生素D可增進鈣吸收，幫助骨骼生長，維持鈣平衡，同吸收率高的海藻鈣同時補充','速崩劑型，顆粒好 好吞服，3分鐘快速溶解、吸收快、負擔少、補充更安心'],
+    ingredients:['天然海藻鈣 500mg','維生素D3','礦物質（銅、鋅、矽）'],
+    salesPitch:['天然海藻鈣比一般碳酸鈣更好吸收！搭配維生素D，讓鈣質真正發揮作用！','速崩劑型，3分鐘快速溶解，不擔心吞嚥困難，銀髮族最友善的補鈣選擇！'],
+    target:'骨質疏鬆高風險者／發育青少年／需要補充鈣質的孕婦／預防骨質流失的成年人' },
+
+  vit_d3:{ id:'vit_d3', img:'images/page-23.png', name:'康采海藻D3錠', tag:'陽光營養', tagline:'海藻D3 提升保護力', cat:'bone', catName:'骨骼關節',
+    diet:'全素可食', usage:'每日1錠，飯後食用', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['專利藻類維生素D3，純淨更安心，提煉自英國養殖藻類，國際認證，安全無污染，100%植物來源，茹素者也可以安心食用','400IU維生素D3，滿足衛福部每日建議量，維生素D可增進鈣吸收，幫助骨骼及牙齒發育，維持神經、肌肉的正常生理，一天一錠輕鬆補充維生素D','小錠劑方便食用，一天一錠輕鬆補充維生素D'],
+    ingredients:['海藻維生素D3 400IU（植物來源）'],
+    salesPitch:['台灣人日曬嚴重不足！維生素D缺乏是台灣最常見的營養缺乏症之一！','海藻來源D3，全素者也可以吃！小小一錠，每日補足維生素D，保護骨骼和免疫力！'],
+    target:'維生素D攝取不足者／常外食者／飲食不均衡者／希望增進鈣吸收者' },
+
+  multivit:{ id:'multivit', img:'images/page-20.png', name:'康采超級綜合維他命錠', tag:'均衡營養', tagline:'均衡營養 保護更全面', cat:'bvit', catName:'B群活力',
+    diet:'奶素可食', usage:'每日2錠，早餐後食用', certBadge:'',
+    badges:[{t:'奶素可食',c:'tag-veg'}],
+    benefits:['添加13種維生素＋10種礦物質，均衡營養，2顆可補充12種維生素素達70%，輕鬆補足飲食中不足的人體必需維生素與礦物質，完配設計，小顆好吞','4種營養素建議量達100%，維持保護力，四種維生素不易攝取的維生素B6、C、礦物質鋅、硒，含量達100%，幫助調節生理機能，提升保護力'],
+    ingredients:['13種維生素','10種礦物質','維生素B6、C、鋅、硒（各達100%建議量）'],
+    salesPitch:['飲食不均衡、外食族、偏食者，每天一定缺這缺那！','康采超級綜合維他命，13種維生素＋10種礦物質，一顆補齊一天所需，最省時省力的保健方案！'],
+    target:'素食者／青少年／上班族／健身族群／體虛族／外食、偏食者／想補充飲食中不足營養素者' },
+
+  super_b:{ id:'super_b', img:'images/page-24.png', name:'康采超級B群錠', tag:'打擊虛累', tagline:'告別疲憊 全面活絡', cat:'bvit', catName:'B群活力',
+    diet:'全素可食', usage:'每日2錠，飯後食用', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['含TTFD長效高濃度，舒展疲勞更更快，TTFD可在體內可轉成活性維生素B1，能夠打擊疲勞，作用更快，加上TTFD為脂溶性，較不易被酵素分解，可有效提升在體內的存留時間','完整8種B群＋8%葉酸，高效配方，加值活力，完整8種B群，人體必需且重要的維生素，補充維生素B1B2有助維持能量代謝正常代謝、B12有助於血球的形成，B12加葉酸幫助血球的形成','緩釋配方，作用一整天，增強體力與活力，緩釋配方讓維他命B群有助於發揮精神旺盛'],
+    ingredients:['TTFD（長效型維生素B1）','完整8種B群','葉酸 8%','牛磺酸'],
+    salesPitch:['B群是現代人最需要的能量維生素！但一般B群只能維持幾小時效果！','康采超級B群含TTFD長效型B1，緩釋配方，作用一整天！讓你從早到晚精力充沛！'],
+    target:'忙碌力大、工時長的上班族／常加班者／久坐辦公室者／長時間維持同樣姿勢的上班族' },
+
+  active_b:{ id:'active_b', img:'images/page-25.png', name:'康采活力B群緩釋錠', tag:'長效續航', tagline:'B進活力 持續補給', cat:'bvit', catName:'B群活力',
+    diet:'全素可食', usage:'每日1錠，飯後食用', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['高劑量長效緩釋，維持整天活力，可在體內長效釋放，並且提高吸收，維持整天好精神','8種完整維生素B群＋泛酸、牛磺酸，維持能量，維生素B1、B2、B6、B12達衛福部建議最高劑量，其中B12高達1000微克，補充素食者最欠缺的高量B12','長效緩釋型維他命B群，有助提振精神旺盛'],
+    ingredients:['8種B群（B1、B2、B6、B12高劑量）','B12 1000μg','泛酸','生物素','葉酸'],
+    salesPitch:['上班族熬夜、K族外食族，最需要B群補充！','康采活力B群緩釋錠，B12高達1000μg！素食者最欠缺的高量B12，一錠補足，長效釋放一整天！'],
+    target:'上班族／熬夜族／K族外食族／營養不均衡者' },
+
+  probiotic:{ id:'probiotic', img:'images/page-07.png', name:'康采五合一高機能益生菌', tag:'機能調整', tagline:'好菌平衡 體內環保', cat:'gut', catName:'腸道消化',
+    diet:'奶素可食', usage:'每日1包，飯前飯後均可食用', certBadge:'',
+    badges:[{t:'奶素可食',c:'tag-veg'}],
+    benefits:['高菌數與多元菌種，5大機能全方位守護，每包添加2000億高菌數，包含乳酸菌及益生菌15種不同種類功能的優質菌種，幫助改善細菌生態，維持腸暢，加強保護','3大專利科技，順暢消化道，提升6倍定殖率，採用三層包膜技術，PBA益生方舟運輸抵達消化道，並透過專利Pro6X定殖配方，提升6倍定殖率','減糖低熱量，健康少負擔'],
+    ingredients:['益生菌 2000億CFU（15種菌株）','益生元（菊糖纖維）','三層保護膜技術','Pro6X定殖配方'],
+    salesPitch:['腸道是人體第二個大腦！腸道健康，免疫力才能真正強起來！','康采五合一高機能益生菌，2000億高菌數15種菌株，三層保護讓好菌活著抵達腸道定殖！','環境改變、換季、壓力大都會影響腸道！每天一包，把腸道照顧好，全身自然好！'],
+    target:'生活忙碌壓力大者／需改善消化道機能者／環境與季節變化容易需調整體質者' },
+
+  enzyme:{ id:'enzyme', img:'images/page-08.png', name:'康采124 YES酵素飲', tag:'有酵代謝', tagline:'維持代謝 有酵運轉', cat:'gut', catName:'腸道消化',
+    diet:'奶素可食', usage:'每日1包', certBadge:'',
+    badges:[{t:'奶素可食',c:'tag-veg'}],
+    benefits:['124種7大類蔬果發酵精華，促進新陳代謝，添加海藻AES消化酵素與紐西蘭黃金奇異果，幫助消化腸胃功能','消化酵素＋黃金奇異果萃取，維持消化道機能，幫助消化，涵蓋共7大類124種蔬果發酵精華，促進新陳代謝','每包含1.8公克膳食纖維，促進腸道蠕動，日本專利水溶性膳食纖維1.8公克(約2盤青菜膳食纖維含量)'],
+    ingredients:['124種蔬果發酵精華','海藻AES消化酵素','紐西蘭黃金奇異果萃取','膳食纖維 1.8g'],
+    salesPitch:['吃東西容易脹氣、消化不良？缺少的就是酵素！','康采124種蔬果酵素飲，幫助消化、促進代謝，飯後一包，輕鬆舒適！'],
+    target:'外食者／蔬果攝取不規律者／蔬果攝取不足者／消化腸胃功能下降者／快食者' },
+
+  fiber:{ id:'fiber', img:'images/page-09.png', name:'康采蔬果高纖果凍飲', tag:'排便順暢', tagline:'高纖低卡 膳解人意', cat:'gut', catName:'腸道消化',
+    diet:'全素可食', usage:'每日1包', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['每包含專利4.5公克膳食纖維，促進腸道蠕動，專利膳食纖維4.5公克的4倍青菜膳食纖維含量，高纖顆粒狀，83%試用者表示3天見到「排便順暢」','80種蔬果酵素＋黃金奇異果，維持消化道機能，有酵補充80種蔬果發酵精華，豐富營養成份，促進新陳代謝','果凍飲設計好吃好吞嚥，低卡隨身包好攜帶，每包只有20大卡，糖分低，美味口感減少負擔，隨身包，隨時補充，享受快捷暢順'],
+    ingredients:['膳食纖維 4.5g（專利）','80種蔬果酵素','黃金奇異果萃取','果凍劑型（20大卡）'],
+    salesPitch:['便秘困擾讓你坐立難安？每天吃不到4.5份蔬果？','康采高纖果凍飲，4.5g專利膳食纖維，83%使用者3天見效！好吃好攜帶，補纖維就是這麼簡單！'],
+    target:'蔬果攝取量太少者／希望促進腸道蠕動者／增加飽腹感者' },
+
+  milk_tea:{ id:'milk_tea', img:'images/page-33.png', name:'康采紅茶拿鐵', tag:'順暢窈窕', tagline:'美味醇香 輕負擔飲', cat:'gut', catName:'腸道消化',
+    diet:'蛋奶素可食', usage:'每日1包，以150毫升溫熱水沖泡飲用', certBadge:'',
+    badges:[{t:'蛋奶素可食',c:'tag-veg'}],
+    benefits:['每包添加60億益生菌＋膳食纖維，窈窕順暢，每包添加耐酸鹼特性的益生菌（芽胞乳酸菌），有效達到消化道蠕動功能，並添加1800毫克膳食纖維','美味濃醇香，好喝低負擔 飲品新選擇，紅茶香氣搭配細膩、甜潤口感，融合細密奶的濃厚乳香，激盪出美妙的乳香滋味，每包熱量只有55大卡','飲品設計，每包熱量只有55大卡，低熱量'],
+    ingredients:['耐酸鹼益生菌 60億CFU','膳食纖維 1800mg','紅茶萃取','濃縮奶粉'],
+    salesPitch:['想要每天補充益生菌卻覺得膠囊好麻煩？康采紅茶拿鐵！益生菌做成好喝的奶茶！','60億益生菌＋膳食纖維，下午茶時間就是保健時間！有異族需求的人也能享受！'],
+    target:'有異味需求者／希望順暢窈窕者／重視腸道健康又享受美食者' },
+
+  berry:{ id:'berry', img:'images/page-26.png', name:'康采A+多莓萃飲輕纖版', tag:'私密護理', tagline:'舒爽生活 莓好自在', cat:'women', catName:'女性保健',
+    diet:'全素可食', usage:'每日1包，撕開可直接飲用', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['添加前花青素100毫克，維持舒爽自在，蔓越莓的前花青素是維持自在在舒爽的好幫手，每包添加蔓越莓萃取的前花青素100毫克，提升私密防護力','蔓越莓酒釀精，改善細菌叢生態，持續護理，添加可以維持私密細菌叢生態的蔓越莓酒釀精，持續保養，降低反應的頻率','綜合莓果、智利酒果與石榴萃取，加乘保護，專利製成的綜合莓果含有多種有機多酚，保養守護更全面'],
+    ingredients:['前花青素 100mg（蔓越莓萃取）','蔓越莓酒釀精','智利酒果萃取','石榴萃取'],
+    salesPitch:['女性的私密困擾難以開口說！但這真的非常影響生活品質！','康采A+多莓萃飲，前花青素100mg，每日一包，從內而外維持私密健康，舒爽自在每一天！','工作常久站的女性、常出差的女性，私密保養不能等！這款讓你安心又方便！'],
+    target:'工作常久站的女性／熟齡女性' },
+
+  collagen:{ id:'collagen', img:'images/page-27.png', name:'康采膠原10000美妍飲輕纖版', tag:'亮麗青春', tagline:'Q彈膠嫩 水潤透亮', cat:'women', catName:'女性保健',
+    diet:'葷食', usage:'每日1包，撕開可直接飲用', certBadge:'',
+    badges:[],
+    benefits:['10000mg法國膠原蛋白，高單位，超有感，足量添加法國大廠10000毫克，2000道獨門小分子膠原蛋白，好吸收，有助Q彈','新添加西班牙橄欖皮萃取物，維持亮澤，透過獨特技術萃取出高濃度多數物質，協同膠原蛋白作用，成就好人味，讓肌膚亮澤光彩','水潤複方，提高吸收與作用，維持最佳狀態，添加AC-11專利鉤藤鹿鉤皮萃取（含洛美），德國牛奶草取（含密落美），維生素C等水潤成分'],
+    ingredients:['法國膠原蛋白 10000mg（小分子）','西班牙橄欖皮萃取','AC-11專利鉤藤萃取','維生素C'],
+    salesPitch:['膠原蛋白是美麗的根本！但不是每種膠原蛋白都有效！','康采膠原10000mg，法國頂級來源，小分子好吸收！加上西班牙橄欖皮萃取協同作用，讓肌膚真正Q彈水潤！','25歲後膠原蛋白每年流失1%，現在開始補充，永遠不算晚！'],
+    target:'想維持健康保養者／希望美容養顏食品高有效感者／注重保養者' },
+
+  hyaluronic:{ id:'hyaluronic', img:'images/page-28.png', name:'康采玻潤雪姬飲', tag:'雪潤光亮', tagline:'喝的保濕液 百倍儲水', cat:'women', catName:'女性保健',
+    diet:'全素', usage:'每日1包，撕開可直接飲用', certBadge:'',
+    badges:[{t:'全素',c:'tag-veg'}],
+    benefits:['80mg高含量玻尿酸 獨家小分子技術，好吸收，每包足量添加80毫克玻尿酸，達到衛福部每日建議攝取高劑量，10萬道獨門小分子玻尿酸，保留活性，提高吸收效率','專利山葵葉萃取，獨特膳苷成分，維持亮澤，具有強力萃取效功效，可協同膠原蛋白作用，可協同肌膚保持亮澤、山葵葉苷具有強化代謝、維持水潤透亮','櫻花萃取液，具有多種多酚，維持光透淨亮，含有黃酮素和維生素，幫助減少歲月痕跡，強化保濕潤澤'],
+    ingredients:['玻尿酸 80mg（小分子）','山葵葉萃取','櫻花萃取液','維生素C'],
+    salesPitch:['皮膚乾燥、上妝容易脫粉、臉部缺水感？需要的不只是外擦保養，更要由內補充！','康采玻潤雪姬飲，80mg玻尿酸搭配山葵葉萃取，讓肌膚從裡到外充飽水，透亮如雪！'],
+    target:'想維持青春光采者／希望美容養顏食品高有效感者／想要水潤淨亮者' },
+
+  royaljelly:{ id:'royaljelly', img:'images/page-29.png', name:'康采蜂王乳升級版', tag:'蜂存光采', tagline:'維持青春 魅力蜂采', cat:'women', catName:'女性保健',
+    diet:'葷食', usage:'每日2次，每次2錠，飯後食用', certBadge:'',
+    badges:[],
+    benefits:['1800毫克生鮮蜂王乳，葵涌酸挑戰市售純度最高，擁有數十種珍貴營養素，每份(4錠)相當於1800毫克生鮮蜂王乳，活性成分葵涌酸濃度達6%以上，維持蜂采與魅力','芝麻素有效維持青春體質，提升睡眠品質，萃取出蜂蜜最核心的營養成分，每顆富含有不到1%的珍芝麻，有效維持青春與美麗，提升睡眠品質'],
+    ingredients:['生鮮蜂王乳 1800mg（高純度）','葵涌酸 6%以上','芝麻素'],
+    salesPitch:['蜂王乳是大自然給女性最珍貴的禮物！女王蜂的秘密就在蜂王乳！','康采蜂王乳含量1800mg，葵涌酸高達6%，補充女性所需，維持青春魅力，睡眠品質也一起改善！'],
+    target:'希望促進代謝的女性／維持活力的女性／希望提升光澤度的女性／希望調整青春體質的女性' },
+
+  soy:{ id:'soy', img:'images/page-30.png', name:'康采大豆異黃酮膠囊', tag:'風華再現', tagline:'舒緩熟齡 順暢轉期', cat:'women', catName:'女性保健',
+    diet:'全素', usage:'一般保養(30-40歲)：每日1顆；加強保養(40歲以上)：每日2顆', certBadge:'',
+    badges:[{t:'全素',c:'tag-veg'}],
+    benefits:['每顆添加48毫克大豆異黃酮，輕鬆補充養養，萃取自沒有基因改造的大豆黃酮，非過敏原的大豆異黃酮，採用去醣基大豆異黃酮，活性高、能夠調整體質，讓熟齡轉換期散發由內而外與外的光采','專利波羅蜜與芝麻素萃取，調節機能，波羅蜜富含各類黃酮，維生素素、礦物質，是男多種營養價值，芝麻素幫助入睡，調節生理機能'],
+    ingredients:['大豆異黃酮 48mg（去醣基）','波羅蜜萃取','芝麻素','維生素B群'],
+    salesPitch:['熟齡女性的最佳夥伴！大豆異黃酮補充植物性雌激素，讓更年期轉換期更從容！','去醣基大豆異黃酮活性更高，搭配芝麻素幫助睡眠，熟齡女性的全方位保養就靠這一顆！'],
+    target:'協助熟齡期調節的女性（30-50歲）' },
+
+  maca:{ id:'maca', img:'images/page-17.png', name:'康采巔峰戰力馬卡飲', tag:'精力旺盛', tagline:'幸福美滿 勇往直前', cat:'men', catName:'男性保健',
+    diet:'素食', usage:'每日1包，餐後食用（男女適用），20毫升x30包', certBadge:'',
+    badges:[{t:'男女通用',c:'tag-veg'}],
+    benefits:['「秘魯人蔘」紅黑馬卡，精力旺盛，每包含1000毫克紅馬卡，有秘魯人蔘的稱號，可維持精神旺盛','L-精胺酸＋專利透納葉萃取，活力滿滿，每包添加1000毫克精胺酸與透納葉萃取，提升循環活絡好','專利蕾拉黃＋牛磺酸，體力更好，專利蕾拉均衡牛磺酸，可平衡激素與促進新陳代謝，縮短體態衰退，添加葡萄糖鋅與菸鹼酸，續航力更好'],
+    ingredients:['紅馬卡 1000mg','L-精胺酸 1000mg','透納葉萃取（專利）','牛磺酸','葡萄糖酸鋅'],
+    salesPitch:['體力不如以前？力不從心中年危機？馬卡是南美洲秘魯的「精力聖品」！','康采顛峰戰力馬卡飲，紅黑馬卡＋L-精胺酸＋牛磺酸，從根本補充，讓你重回顛峰狀態！','男女都適用，夫妻一起喝，感情更好！'],
+    target:'力不從心中年以上的年長者／無精採的上班族／體能不如從前者／體流動量大不同者' },
+
+  pumpkin:{ id:'pumpkin', img:'images/page-18.png', name:'康采南瓜籽茄紅素膠囊', tag:'開關自如', tagline:'暢快有勁 流暢自如', cat:'men', catName:'男性保健',
+    diet:'葷食', usage:'一般保養：每日飯後1顆；加強保養：每日飯後2-3顆', certBadge:'',
+    badges:[],
+    benefits:['足量南瓜籽萃取物，調節機能，維持流暢，每份3顆含有417毫克南瓜籽萃取，含維生素素、礦物質與豐富的植物固醇，幫助保持青春能量，維持流暢平衡','青春元素「茄紅素」提供多種保健功效，是男女都需要健康的的素，是男女都需要健康的基礎，含有茄紅素幫助多種健康的功效，提供青春能量，元氣活力','活力元素 鋅、硼＋精胺酸，維持機能更自信，鋅與硼都是人體必需微量元素，是男性體內鋅需量最高的的礦物質，男性需要維持幸福活力，衡量衛補建築男性每日所需要15毫克鋅'],
+    ingredients:['南瓜籽萃取 417mg','茄紅素','鋅 15mg','精胺酸','硼'],
+    salesPitch:['男性常見的困擾！頻尿、起夜、不順暢，嚴重影響睡眠品質與生活！','康采南瓜籽茄紅素，幫助維持男性機能，流暢自如，讓銀髮男性重拾自信！'],
+    target:'中年以上男性／上廁所頻率高的男性／希望維持機能流暢者' },
+
+  protein_choco:{ id:'protein_choco', img:'images/page-31.png', name:'康采營養蛋白飲-巧克力口味', tag:'優質蛋白', tagline:'體力滿分 生活加分', cat:'weight', catName:'體重管理',
+    diet:'奶素可食', usage:'每日1包，加入250毫升常溫溫水或飲品，可依個人喜好調整', certBadge:'',
+    badges:[{t:'奶素可食',c:'tag-veg'}],
+    benefits:['補充3大高優質蛋白質，身體利用率高，體感好，1包含13.5公克的優質蛋白（大豆蛋白、碗豆蛋白、乳清蛋白），再搭配日常飲食，輕鬆攝取足夠蛋白質','13種維生素與11種礦物質，補充完整營養，達到衛福部每日建議量的50%，再加外5種礦物質，補充營養素','窈窕代謝配方，啟動緩慢代謝管理，促進新陳代謝，專利白腎豆萃取，苦瓜萃取，每包熱量只有106大卡，強化欲窕代謝'],
+    ingredients:['三源蛋白 13.5g（大豆、碗豆、乳清）','13種維生素＋11種礦物質','白腎豆萃取（專利）','苦瓜萃取'],
+    salesPitch:['想減肥但怕肌肉流失？吃不夠蛋白質，減肥適得其反！','康采營養蛋白飲，13.5g三源蛋白，加上窈窕代謝配方，讓你瘦得健康，肌肉不流失！','巧克力口味好喝不膩，運動後補充、取代一餐都適合！'],
+    target:'想補充蛋白質者／飲食不均衡者／想維持窈窕者' },
+
+  protein_vanilla:{ id:'protein_vanilla', img:'images/page-32.png', name:'康采營養蛋白飲-香草口味', tag:'優質蛋白', tagline:'體力滿分 生活加分', cat:'weight', catName:'體重管理',
+    diet:'奶素可食', usage:'每日1包，加入250毫升常溫溫水或飲品，可依個人喜好調整', certBadge:'',
+    badges:[{t:'奶素可食',c:'tag-veg'}],
+    benefits:['補充3大高優質蛋白質，身體利用率高，體感好，1包含13.5公克的優質蛋白','13種維生素與11種礦物質，補充完整營養','窈窕代謝配方，啟動緩慢代謝管理，每包熱量只有106大卡'],
+    ingredients:['三源蛋白 13.5g','13種維生素＋11種礦物質','白腎豆萃取','香草天然香料'],
+    salesPitch:['喜歡清爽口感的你，香草口味是最佳選擇！','同樣的頂級三源蛋白配方，香草清香讓你每天補充蛋白質都是享受！'],
+    target:'想補充蛋白質者／飲食不均衡者／想維持窈窕者' },
+
+  black_coffee:{ id:'black_coffee', img:'images/page-34.png', name:'康采纖盈黑咖啡', tag:'享受美型', tagline:'香醇無壓 享受窈窕', cat:'weight', catName:'體重管理',
+    diet:'全素可食', usage:'每日1包，以150毫升熱開水沖泡飲用，可依個人喜好調整水量', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['3大專利美型因子，加速美型，更加窈窕，北歐品質高因子中的兒茶素的3倍，促進代謝。法國仙人掌葉萃取，含水溶性與非水溶性纖維，幫助腸暢，調節生理機能，維持窈窕','10道工法＋3大程序，香醇濃郁，低咖啡因，嚴選濃縮焙達咖啡豆，以獨特10道工法將最原始天然原豆採深度度烘方式，運用霧化乾燥技術，讓咖啡粉末均一顆粒，每一口都嚐到到咖啡的細膩骨骼','每包咖啡因含量68.8毫克，熱量只有17.6大卡'],
+    ingredients:['兒茶素（北歐高品質）','法國仙人掌葉萃取','咖啡因 68.8mg','熱量 17.6大卡'],
+    salesPitch:['每天要喝咖啡，何不讓咖啡同時幫你窈窕？','康采纖盈黑咖啡，3大專利美型因子，讓你享受咖啡的同時加速代謝！低咖啡因設計，下午喝也不影響睡眠！'],
+    target:'喜愛咖啡者／希望維持窈窕美型者' },
+
+  walnut:{ id:'walnut', img:'images/page-35.png', name:'康采好好記核桃肽錠', tag:'靈敏益智', tagline:'思緒靈敏 活絡益智', cat:'brain', catName:'腦部頭髮',
+    diet:'全素可食', usage:'每日2錠，飯後食用', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['管花肉蓯蓉萃取，高效維持專注，2顆含有100毫克管花肉蓯蓉萃取總富含有蓯蓉總苷，好效率不分神','小分子核桃仁，專利製程，思緒清晰好靈光，2顆添加200毫克元智慧的核桃仁，更快被身體利用，效果好','磷脂醯絲胺酸(PS)，提升理解力與效率，2顆添加100毫克PS，幫助維持精明度，提升做事效率與表現'],
+    ingredients:['管花肉蓯蓉萃取 100mg','核桃肽 200mg','磷脂醯絲胺酸 PS 100mg','維生素B6、B12、葉酸'],
+    salesPitch:['記憶力越來越差、思緒不清晰、工作效率下降？這不是你的問題，是大腦需要補充了！','康采好好記核桃肽，三效合一：管花肉蓯蓉＋核桃肽＋PS，讓思緒更清晰，記憶力回升！','學生考試前、上班族重要會議前、銀髮族維持腦部健康，這款讓你腦力全開！'],
+    target:'想維持思考力者／提高學習效率者／加強反應等族群' },
+
+  hair:{ id:'hair', img:'images/page-36.png', name:'康采黑魔法愛心口含錠', tag:'量麗豐盈', tagline:'滋養根源 蓬鬆豐盈', cat:'brain', catName:'腦部頭髮',
+    diet:'全素可食', usage:'每日2錠，飯後食用', certBadge:'',
+    badges:[{t:'全素可食',c:'tag-veg'}],
+    benefits:['添加高含量生物素，強化根源，提升抓地力，2顆添加10,080毫克生物素，符合研究究濃根源劑量刷新，有感體驗','白首烏＋黑芝麻＋蕁麻，天然方草本萃取，白首烏萃取，增進根源健康，鞏固根基，幫助找回自信；黑芝麻＋蕁麻萃取，調節生理平衡機制；蕁麻萃取物，有助量麗豐盈','添加維生素C、E、B6、B12、葉酸和銅等，營養補給，滋養根源，維持健康'],
+    ingredients:['生物素 10,080μg','白首烏萃取','黑芝麻萃取','蕁麻萃取','維生素C、E、B群、銅'],
+    salesPitch:['頭髮越來越少、髮質乾燥、容易脫落？這是身體給你的警告！','康采黑魔法愛心口含錠，生物素10,080μg超高劑量！加上白首烏＋黑芝麻＋蕁麻天然草本，從根源滋養，讓頭髮豐盈烏黑！','小小愛心錠，美麗大效果！直接含服，方便又有效！'],
+    target:'想維持頭髮亮麗者／頭頂在太空中或外型在太空在外型上正的族群' },
+};
+
+const diseases = [
+  { num:1, emoji:'🩺', name:'高血壓', color:'#E53935',
+    desc:'台灣高血壓患者超過500萬人，高鹽飲食、壓力大、肥胖為主要風險因素。',
+    key:['Omega-3魚油','鎂（Magnesium）','CoQ10','鉀'],
+    sup:['維生素D','大蒜萃取','B群'],
+    rec:['康采高濃度魚油沙棘Plus','康采超級綜合維他命'] },
+  { num:2, emoji:'🫀', name:'高血脂/高膽固醇', color:'#C62828',
+    desc:'血中膽固醇、LDL偏高，增加心血管疾病風險。飲食控制是首要。',
+    key:['紅麴（Monacolin-K）','Omega-3魚油','納豆激酶'],
+    sup:['維生素C','葡萄多酚','CoQ10'],
+    rec:['康采紅麴膠囊 ⭐','康采高濃度魚油沙棘Plus','康采日本納豆膠囊'] },
+  { num:3, emoji:'🍭', name:'糖尿病/血糖偏高', color:'#E65100',
+    desc:'台灣糖尿病患者超過230萬人，飲食控制為首要，不能取代藥物治療。',
+    key:['鉻（Chromium）','鎂','維生素D','Omega-3'],
+    sup:['B群','白腎豆萃取','苦瓜萃取'],
+    rec:['康采超級綜合維他命','康采高濃度魚油沙棘Plus','康采營養蛋白飲'] },
+  { num:4, emoji:'🦴', name:'骨質疏鬆', color:'#FF8F00',
+    desc:'台灣骨質疏鬆盛行率，女性65歲以上高達1/3！預防要從年輕開始。',
+    key:['鈣（Calcium）','維生素D3','鎂','維生素K2'],
+    sup:['膠原蛋白','硼','矽'],
+    rec:['康采海藻鈣錠 ⭐','康采液態檸檬高鈣飲','康采海藻D3錠','康采優捷強化錠'] },
+  { num:5, emoji:'🦵', name:'關節炎/退化性關節病', color:'#6D4C41',
+    desc:'台灣關節炎患者眾多，體重控制是首要，保健品可幫助軟骨修護。',
+    key:['非變性第二型膠原蛋白 UCII','Omega-3（抗發炎）','玻尿酸'],
+    sup:['維生素C','維生素D','鈣鎂'],
+    rec:['康采優捷強化錠 ⭐','康采高濃度魚油沙棘Plus','康采海藻鈣錠'] },
+  { num:6, emoji:'😴', name:'睡眠障礙/失眠', color:'#5C6BC0',
+    desc:'台灣每5人就有1人有睡眠問題。保健品可輔助改善，重度失眠應就醫。',
+    key:['GABA','胺基酸（色胺酸前驅）','鎂','茶胺酸'],
+    sup:['維生素B6','百香果萃取'],
+    rec:['康采睡美人胺基酸粉 ⭐','康采超級B群錠'] },
+  { num:7, emoji:'👁️', name:'眼睛疲勞/黃斑部病變', color:'#00897B',
+    desc:'長時間使用3C、接觸藍光是現代眼睛問題的主因，預防重於治療。',
+    key:['游離型葉黃素','玉米黃素','蝦紅素','Omega-3'],
+    sup:['花青素','維生素C、E','玻尿酸'],
+    rec:['康采金盞花葉黃素玻潤飲 ⭐','康采金盞花葉黃素膠囊','康采高濃度魚油沙棘Plus'] },
+  { num:8, emoji:'🫄', name:'便秘/腸道問題', color:'#558B2F',
+    desc:'台灣便秘盛行率高達20%，飲食纖維不足是主因。腸道健康影響全身免疫力。',
+    key:['益生菌（Probiotics）','益生元（Prebiotics）','膳食纖維'],
+    sup:['酵素','蘆薈萃取'],
+    rec:['康采五合一高機能益生菌 ⭐','康采蔬果高纖果凍飲','康采124 YES酵素飲','康采紅茶拿鐵'] },
+  { num:9, emoji:'🌸', name:'更年期症候群', color:'#E91E63',
+    desc:'女性45-55歲進入更年期，雌激素下降導致熱潮紅、失眠、骨質流失等。',
+    key:['大豆異黃酮（植物性雌激素）','鈣+維生素D','GABA'],
+    sup:['蜂王乳','B群','Omega-3'],
+    rec:['康采大豆異黃酮膠囊 ⭐','康采睡美人胺基酸粉','康采海藻鈣錠','康采蜂王乳升級版'] },
+  { num:10, emoji:'🛡️', name:'免疫力低下/反覆感冒', color:'#2E7D32',
+    desc:'免疫力與腸道健康、睡眠品質、壓力密切相關。換季時特別需要加強。',
+    key:['SODlike活性','維生素C','鋅','益生菌'],
+    sup:['白藜蘆醇','B群'],
+    rec:['康采極緻青春飲200萬活性EX ⭐','康采葡萄萃取白藜蘆醇','康采五合一高機能益生菌','康采超級綜合維他命'] },
+];
+
+// ══════════════════════════════
+// RENDER HOME
+// ══════════════════════════════
+function renderHome() {
+  const grid = document.getElementById('cat-grid');
+  grid.innerHTML = categories.map(c => `
+    <div class="cat-card" onclick="showCategory('${c.id}')">
+      <div class="cat-bar" style="background:${c.color}"></div>
+      <span class="cat-emoji">${c.emoji}</span>
+      <div class="cat-name">${c.name}</div>
+      <div class="cat-count">${c.products.length} 項產品</div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════
+// SHOW CATEGORY
+// ══════════════════════════════
+function showCategory(catId) {
+  const cat = categories.find(c => c.id === catId);
+  const prods = cat.products.map(id => products[id]).filter(Boolean);
+
+  document.getElementById('cat-page-header').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <span onclick="showPage('home')" style="font-size:22px;cursor:pointer;color:${cat.color}">‹</span>
+      <span style="font-size:28px">${cat.emoji}</span>
+      <div>
+        <div class="cat-page-title">${cat.name}</div>
+        <div style="font-size:11px;color:var(--text-light)">${prods.length} 項產品</div>
+      </div>
+    </div>
+    <div class="cat-page-desc">${cat.desc}</div>`;
+
+  document.getElementById('product-list').innerHTML = prods.map(p => `
+    <div class="product-card" onclick="showProduct('${p.id}')">
+      <div class="product-card-img">
+        <img src="${p.img}" alt="${p.name}" loading="lazy">
+        ${p.certBadge ? `<span class="img-badge">${p.certBadge}</span>` : ''}
+        ${p.badges[0] ? `<span class="img-tag ${p.badges[0].c}">${p.badges[0].t}</span>` : ''}
+      </div>
+      <div class="product-card-body">
+        <div class="product-card-name">${p.name}</div>
+        <div class="product-card-tagline">${p.tag}・${p.tagline}</div>
+        <div class="product-card-target">👥 ${p.target.split('／')[0]}…</div>
+        <div class="product-card-footer">
+          <span>查看詳情・銷售話術</span>
+          <span>›</span>
+        </div>
+      </div>
+    </div>`).join('');
+
+  showPage('category');
+}
+
+// ══════════════════════════════
+// SHOW PRODUCT DETAIL
+// ══════════════════════════════
+function showProduct(pid) {
+  const p = products[pid];
+  if (!p) return;
+  const cat = categories.find(c => c.id === p.cat);
+  const pitchLabels = ['🎯 開場引入','💡 產品亮點','📊 科學依據','🌟 結語推薦'];
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-img-wrap">
+      <img src="${p.img}" alt="${p.name}" class="detail-page-img">
+      <div class="detail-overlay-header">
+        <span class="detail-back" onclick="showCategory('${p.cat}')">‹ ${cat.name}</span>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-name">${p.name}</div>
+      <div class="detail-tagline">${p.tag}・${p.tagline}</div>
+      <div class="detail-tags">
+        ${p.badges.map(b=>`<span class="detail-tag ${b.c}" style="background:${b.c==='tag-gov'?'#FF8F00':'#4CAF50'};color:#fff">${b.t}</span>`).join('')}
+        <span class="detail-tag" style="background:#E8F5E9;color:#1B5E20">${p.diet}</span>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title"><span>✨</span> 核心功效</div>
+        ${p.benefits.map(b=>`<div class="bullet"><span class="bullet-dot">•</span><span class="bullet-text">${b}</span></div>`).join('')}
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title"><span>🔬</span> 主要成分</div>
+        ${p.ingredients.map((i,idx)=>`<span class="chip ${idx<2?'chip-green':'chip-purple'}">${i}</span>`).join('')}
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title"><span>💬</span> 銷售話術</div>
+        ${p.salesPitch.map((s,i)=>`
+          <div class="sales-box">
+            <div class="sales-label">${pitchLabels[i]||'💬 重點'}</div>
+            <p>${s}</p>
+          </div>`).join('')}
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title"><span>ℹ️</span> 產品資訊</div>
+        <div class="info-row"><span class="info-label">👥 適用</span><span class="info-value">${p.target}</span></div>
+        <div class="info-row"><span class="info-label">🥗 飲食</span><span class="info-value">${p.diet}</span></div>
+      </div>
+
+      <div class="detail-section" style="margin-bottom:20px">
+        <div class="detail-section-title"><span>📋</span> 食用方式</div>
+        <div class="usage-box"><span style="font-size:22px">💊</span><span class="usage-text">${p.usage}</span></div>
+      </div>
+    </div>`;
+  showPage('detail');
+}
+
+// ══════════════════════════════
+// SEARCH
+// ══════════════════════════════
+function doSearch(q) {
+  const el = document.getElementById('search-results');
+  if (!q.trim()) { el.innerHTML='<div class="search-empty"><div style="font-size:44px;margin-bottom:10px">🔍</div>輸入關鍵字搜尋產品</div>'; return; }
+  const results = Object.values(products).filter(p =>
+    [p.name,p.tagline,p.tag,p.catName,p.target,p.diet,...p.benefits,...p.ingredients,...p.salesPitch].some(t=>t.toLowerCase().includes(q.toLowerCase())));
+  if (!results.length) { el.innerHTML=`<div class="search-empty"><div style="font-size:44px;margin-bottom:10px">😕</div>找不到「${q}」相關產品</div>`; return; }
+  el.innerHTML = results.map(p=>`
+    <div class="search-item" onclick="showProduct('${p.id}')">
+      <img src="${p.img}" alt="" class="search-item-img">
+      <div class="search-item-info">
+        <div class="search-item-name">${p.name}</div>
+        <div class="search-item-cat">${p.catName}</div>
+        <div class="search-item-target">適用：${p.target.split('／')[0]}</div>
+      </div>
+      <span style="font-size:20px;color:var(--primary-light)">›</span>
+    </div>`).join('');
+}
+
+// ══════════════════════════════
+// DISEASE PAGE
+// ══════════════════════════════
+function renderDiseases() {
+  document.getElementById('disease-list').innerHTML = diseases.map(d => `
+    <div class="disease-card">
+      <div class="disease-header" onclick="toggleD(${d.num})">
+        <div class="disease-num" style="background:${d.color}">${d.num}</div>
+        <span style="font-size:26px">${d.emoji}</span>
+        <span class="disease-name-text">${d.name}</span>
+        <span class="disease-arrow" id="arr${d.num}">›</span>
+      </div>
+      <div class="disease-body" id="db${d.num}">
+        <div class="disease-desc">${d.desc}</div>
+        <div class="nutrient-title">🔑 關鍵保健營養素</div>
+        <div class="nutrient-grid">${d.key.map(n=>`<span class="nc-key">${n}</span>`).join('')}</div>
+        <div class="nutrient-title">➕ 輔助營養素</div>
+        <div class="nutrient-grid">${d.sup.map(n=>`<span class="nc-sup">${n}</span>`).join('')}</div>
+        <div class="avon-rec">
+          <div class="avon-rec-title">🌿 推薦康采產品</div>
+          ${d.rec.map(r=>`<span class="avon-chip">${r}</span>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleD(n) {
+  document.getElementById('db'+n).classList.toggle('open');
+  document.getElementById('arr'+n).classList.toggle('open');
+}
+
+// ══════════════════════════════
+// NAV
+// ══════════════════════════════
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const nav = document.getElementById('nav-'+page);
+  if (nav) nav.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showSearch() {
+  showPage('search');
+  document.getElementById('nav-search').classList.add('active');
+  setTimeout(()=>document.getElementById('search-input').focus(),100);
+}
+
+// INIT
+renderHome();
+renderDiseases();
+</script>
+</body>
+</html>
