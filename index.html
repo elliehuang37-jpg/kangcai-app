@@ -120,6 +120,53 @@ body { font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft Jh
 .avon-rec { margin-top:9px; padding-top:9px; border-top:1px dashed var(--border); }
 .avon-rec-title { font-size:11px; font-weight:700; color:var(--secondary); margin-bottom:5px; }
 .avon-chip { display:inline-block; background:linear-gradient(135deg,#FFF8E1,#FFECB3); color:#E65100; font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; margin:2px; border:1px solid #FFB300; cursor:pointer; }
+
+/* ===== Health Assessment ===== */
+.quiz-hero { background:linear-gradient(135deg,#0D47A1,#1565C0,#1976D2); color:#fff; padding:20px; margin-bottom:0; position:relative; overflow:hidden; }
+.quiz-hero::after { content:'💊'; position:absolute; right:-10px; bottom:-10px; font-size:90px; opacity:.15; }
+.quiz-progress-wrap { padding:14px 20px 10px; background:#fff; border-bottom:1px solid var(--border); position:sticky; top:56px; z-index:50; }
+.quiz-progress-label { display:flex; justify-content:space-between; font-size:12px; color:var(--text-light); margin-bottom:6px; }
+.quiz-progress-bar { height:6px; background:#E0E0E0; border-radius:3px; overflow:hidden; }
+.quiz-progress-fill { height:100%; background:linear-gradient(90deg,#1565C0,#42A5F5); border-radius:3px; transition:width .4s ease; }
+.quiz-q-wrap { padding:0 16px 16px; }
+.quiz-q-num { font-size:11px; font-weight:700; color:#1565C0; margin:18px 0 4px; text-transform:uppercase; letter-spacing:.8px; }
+.quiz-q-text { font-size:17px; font-weight:800; line-height:1.45; margin-bottom:16px; color:var(--text); }
+.quiz-opt { display:flex; align-items:flex-start; gap:12px; background:#fff; border:2px solid var(--border); border-radius:14px; padding:13px 14px; margin-bottom:10px; cursor:pointer; transition:.15s; }
+.quiz-opt:active { transform:scale(.98); }
+.quiz-opt.selected { border-color:#1565C0; background:#E3F2FD; }
+.quiz-opt-icon { width:28px; height:28px; border-radius:50%; background:#F5F5F5; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+.quiz-opt.selected .quiz-opt-icon { background:#1565C0; color:#fff; }
+.quiz-opt-text { font-size:14px; line-height:1.45; padding-top:3px; }
+.quiz-nav-row { display:flex; gap:10px; margin:6px 16px 20px; }
+.quiz-btn { flex:1; padding:13px; border:none; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; transition:.15s; }
+.quiz-btn-prev { background:#F5F5F5; color:var(--text); }
+.quiz-btn-next { background:#1565C0; color:#fff; }
+.quiz-btn:disabled { opacity:.4; cursor:not-allowed; }
+.quiz-btn:active:not(:disabled) { transform:scale(.97); }
+.quiz-start-btn { display:block; width:calc(100% - 32px); margin:16px auto; padding:15px; background:#1565C0; color:#fff; border:none; border-radius:14px; font-size:16px; font-weight:700; cursor:pointer; font-family:inherit; }
+.quiz-start-btn:active { transform:scale(.98); }
+/* Results */
+.result-hero { background:linear-gradient(135deg,#1B5E20,#2E7D32); color:#fff; padding:22px 20px; text-align:center; }
+.result-score-ring { width:96px; height:96px; border-radius:50%; border:5px solid rgba(255,255,255,.4); display:flex; flex-direction:column; align-items:center; justify-content:center; margin:12px auto; background:rgba(255,255,255,.15); }
+.result-score-num { font-size:32px; font-weight:800; line-height:1; }
+.result-score-lbl { font-size:11px; opacity:.85; margin-top:2px; }
+.result-status { font-size:14px; font-weight:700; margin-top:10px; }
+.result-sections { padding:0 16px 16px; }
+.result-area-card { background:#fff; border-radius:var(--radius); padding:15px; margin-top:12px; box-shadow:var(--shadow); border-left:4px solid #ccc; }
+.result-area-card.lv3 { border-left-color:#E53935; }
+.result-area-card.lv2 { border-left-color:#FF8F00; }
+.result-area-card.lv1 { border-left-color:#4CAF50; }
+.result-area-title { font-size:15px; font-weight:800; display:flex; align-items:center; gap:7px; }
+.result-area-badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; }
+.lv3 .result-area-badge { background:#FFEBEE; color:#C62828; }
+.lv2 .result-area-badge { background:#FFF3E0; color:#E65100; }
+.lv1 .result-area-badge { background:#E8F5E9; color:#1B5E20; }
+.result-area-desc { font-size:12px; color:var(--text-light); line-height:1.6; margin-top:6px; }
+.result-nutrient { font-size:11px; font-weight:700; color:#1565C0; margin:10px 0 5px; }
+.result-prod-list { display:flex; flex-wrap:wrap; gap:6px; }
+.result-prod-chip { font-size:11px; font-weight:600; padding:4px 10px; background:linear-gradient(135deg,#FFF8E1,#FFECB3); color:#E65100; border:1px solid #FFB300; border-radius:20px; cursor:pointer; }
+.result-prod-chip:active { transform:scale(.97); }
+.result-retake { display:block; width:calc(100% - 32px); margin:16px auto; padding:13px; background:#F5F5F5; color:var(--text); border:none; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
 </style>
 </head>
 <body>
@@ -185,8 +232,16 @@ body { font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft Jh
   <div class="nav-item active" id="nav-home" onclick="showPage('home')"><span class="nav-icon">🏠</span><span class="nav-label">首頁</span></div>
   <div class="nav-item" id="nav-search" onclick="showSearch()"><span class="nav-icon">🔍</span><span class="nav-label">搜尋</span></div>
   <div class="nav-item" id="nav-disease" onclick="showPage('disease')"><span class="nav-icon">🏥</span><span class="nav-label">保健建議</span></div>
+  <div class="nav-item" id="nav-assessment" onclick="showPage('assessment')"><span class="nav-icon">📋</span><span class="nav-label">健康測評</span></div>
 </nav>
 
+<div id="page-assessment" class="page">
+  <div class="quiz-hero">
+    <div style="font-size:19px;font-weight:800;margin-bottom:5px">📋 個人健康狀況測評</div>
+    <div style="font-size:12px;opacity:.85;line-height:1.5">10道問題・自我檢視健康狀況<br>結果分析建議適合的保健方向</div>
+  </div>
+  <div id="quiz-container"></div>
+</div>
 <script>
 const categories = [
   { id:'sod',     emoji:'🛡️', name:'SOD 防禦系列',      color:'#2E7D32', desc:'高規SOD活性防禦，九種珍貴菌菇調理體質，增強免疫抗氧化能力。',           products:['sod200','sod150','sod100'] },
@@ -698,10 +753,288 @@ function toggleD(n) {
   document.getElementById('arr'+n).classList.toggle('open');
 }
 
+
+// ===== Health Assessment =====
+const quizQuestions = [
+  {
+    id:'sleep', area:'睡眠品質', emoji:'🌙',
+    text:'您最近的睡眠狀況如何？',
+    opts:[
+      {icon:'😊', text:'每天都能睡7-8小時，起床精神飽滿'},
+      {icon:'😐', text:'偶爾難入睡或睡眠較淺，但大致還好'},
+      {icon:'😔', text:'常常失眠、半夜易醒，隔天精神差'},
+      {icon:'😩', text:'長期嚴重睡眠不佳，白天嗜睡疲憊'}
+    ]
+  },
+  {
+    id:'gut', area:'腸胃消化', emoji:'🌿',
+    text:'您的腸胃消化狀況？',
+    opts:[
+      {icon:'😊', text:'每天排便順暢，腸胃無不適'},
+      {icon:'😐', text:'偶爾脹氣或排便不順'},
+      {icon:'😔', text:'常有脹氣、便祕或腹瀉困擾'},
+      {icon:'😩', text:'腸胃長期不適，嚴重影響日常生活'}
+    ]
+  },
+  {
+    id:'immune', area:'免疫防禦', emoji:'🛡️',
+    text:'您的免疫力與感冒過敏頻率？',
+    opts:[
+      {icon:'😊', text:'幾乎不感冒，免疫力佳、體質強健'},
+      {icon:'😐', text:'每年感冒1-2次，偶爾有輕微過敏'},
+      {icon:'😔', text:'每季都感冒或有過敏，康復速度慢'},
+      {icon:'😩', text:'免疫力很差，容易生病且遲遲不好'}
+    ]
+  },
+  {
+    id:'bone', area:'骨骼關節', emoji:'🦴',
+    text:'您的骨骼與關節狀況？',
+    opts:[
+      {icon:'😊', text:'關節靈活有力，沒有任何不適'},
+      {icon:'😐', text:'偶爾關節卡卡或輕微痠痛'},
+      {icon:'😔', text:'常有關節疼痛，久站久走後明顯不適'},
+      {icon:'😩', text:'骨質疏鬆或嚴重關節問題影響行動'}
+    ]
+  },
+  {
+    id:'eye', area:'眼睛視力', emoji:'👀',
+    text:'您的眼睛健康狀況？',
+    opts:[
+      {icon:'😊', text:'視力清晰，眼睛不疲勞乾澀'},
+      {icon:'😐', text:'偶爾眼睛乾澀，長時間用眼後不舒服'},
+      {icon:'😔', text:'眼睛經常酸痛、視力模糊或畏光'},
+      {icon:'😩', text:'黃斑部退化、飛蚊症或其他嚴重眼疾'}
+    ]
+  },
+  {
+    id:'cardio', area:'心血管循環', emoji:'❤️',
+    text:'您的心血管與血液循環狀況？',
+    opts:[
+      {icon:'😊', text:'血壓血脂正常，手腳循環良好'},
+      {icon:'😐', text:'偶爾手腳冰冷或血壓略偏高'},
+      {icon:'😔', text:'血脂偏高或血液循環不良，容易頭昏'},
+      {icon:'😩', text:'有三高或心血管疾病，長期服藥控制'}
+    ]
+  },
+  {
+    id:'brain', area:'腦力專注', emoji:'🧠',
+    text:'您的記憶力與專注力如何？',
+    opts:[
+      {icon:'😊', text:'思緒清晰，記憶力好，工作效率高'},
+      {icon:'😐', text:'偶爾忘東忘西或容易分心'},
+      {icon:'😔', text:'記憶力明顯退步，做事越來越沒效率'},
+      {icon:'😩', text:'嚴重腦霧、記憶衰退，影響工作生活'}
+    ]
+  },
+  {
+    id:'beauty', area:'皮膚頭髮', emoji:'🌸',
+    text:'您的皮膚與頭髮狀況？',
+    opts:[
+      {icon:'😊', text:'皮膚光滑有彈性，頭髮烏黑豐盈'},
+      {icon:'😐', text:'偶爾皮膚乾燥或頭髮毛躁分叉'},
+      {icon:'😔', text:'皮膚暗沉、皺紋增加或有明顯落髮'},
+      {icon:'😩', text:'嚴重老化、大量掉髮或慢性皮膚問題'}
+    ]
+  },
+  {
+    id:'energy', area:'體力活力', emoji:'⚡',
+    text:'您整體的體力與精力狀況？',
+    opts:[
+      {icon:'😊', text:'精力充沛，不易疲累，活力十足'},
+      {icon:'😐', text:'工作一段時間後容易疲倦'},
+      {icon:'😔', text:'常感全身疲勞，下午就精神不濟'},
+      {icon:'😩', text:'長期嚴重倦怠，早上起床就感到累'}
+    ]
+  },
+  {
+    id:'weight', area:'體重管理', emoji:'⚖️',
+    text:'您的體重與體態管理狀況？',
+    opts:[
+      {icon:'😊', text:'體態良好，維持理想體重不費力'},
+      {icon:'😐', text:'體重略有超標，偶爾嘗試控制飲食'},
+      {icon:'😔', text:'體重過重，嘗試多種減重方法效果有限'},
+      {icon:'😩', text:'肥胖困擾明顯，代謝慢且體態難控制'}
+    ]
+  }
+];
+
+const areaInfo = {
+  sleep:  { label:'睡眠品質', emoji:'🌙', color:'#5C6BC0',
+    desc:'睡眠不足影響免疫、代謝與情緒。建議補充可幫助放鬆神經、促進睡眠的營養素。',
+    nutrients:['GABA','茶胺酸','23種胺基酸','鈣+鎂'],
+    products:['康采睡美人胺基酸粉','康采海藻鈣錠','康采超級B群錠'] },
+  gut:    { label:'腸胃消化', emoji:'🌿', color:'#558B2F',
+    desc:'腸道是第二大腦，菌叢失衡影響免疫與整體健康。需補充益生菌、酵素與膳食纖維。',
+    nutrients:['益生菌','消化酵素','膳食纖維','益生元'],
+    products:['康采植物多元益生菌膠囊','康采消化酵素膠囊','康采高纖飲'] },
+  immune: { label:'免疫防禦', emoji:'🛡️', color:'#2E7D32',
+    desc:'免疫力是健康的第一道防線。SOD活性、多醣體、抗氧化營養素是關鍵。',
+    nutrients:['SODlike活性','菌菇多醣體','沙棘萃取','維生素C'],
+    products:['康采極緻青春飲200萬活性EX','康采極緻青春飲150萬活性EX','康采活力B群緩釋錠'] },
+  bone:   { label:'骨骼關節', emoji:'🦴', color:'#FF8F00',
+    desc:'骨骼關節需要多元營養素協同作用，單補鈣效果有限，需搭配D3、K2提升吸收。',
+    nutrients:['鈣+D3+K2','葡萄糖胺','軟骨素','膠原蛋白'],
+    products:['康采優捷靈活素錠','康采海藻鈣錠','康采液態鈣','康采維生素D3錠'] },
+  eye:    { label:'眼睛視力', emoji:'👀', color:'#00897B',
+    desc:'藍光傷害、螢幕使用是現代眼睛最大威脅。葉黃素+玉米黃素黃金比例保護黃斑部。',
+    nutrients:['葉黃素','玉米黃素','花青素','維生素A'],
+    products:['康采金盞花葉黃素玻潤飲','康采金盞花萃取菊黃素膠囊'] },
+  cardio: { label:'心血管循環', emoji:'❤️', color:'#E53935',
+    desc:'心血管健康需從降低血脂、改善循環著手，紅麴、納豆激酶、Omega-3是護心三寶。',
+    nutrients:['紅麴','納豆激酶','Omega-3魚油','Q10'],
+    products:['康采紅麴膠囊','康采納豆激酶膠囊','康采高濃度魚油沙棘Plus'] },
+  brain:  { label:'腦力專注', emoji:'🧠', color:'#37474F',
+    desc:'記憶力與專注力需要特殊腦部營養素，核桃肽與磷脂醯絲胺酸是活化腦神經的關鍵。',
+    nutrients:['小分子核桃肽','磷脂醯絲胺酸(PS)','管花肉蓯蓉','B6+B12+葉酸'],
+    products:['康采好好記核桃肽錠','康采超級B群錠','康采人蔘精力湯'] },
+  beauty: { label:'皮膚頭髮', emoji:'🌸', color:'#E91E63',
+    desc:'由內而外的美麗需要膠原蛋白、玻尿酸、生物素等關鍵美容營養素每日補充。',
+    nutrients:['膠原蛋白10000mg','玻尿酸','生物素','大豆異黃酮'],
+    products:['康采多莓萃飲膠原飲','康采玻潤雪姬','康采蜂王乳膠囊','康采黑魔法錠'] },
+  energy: { label:'體力活力', emoji:'⚡', color:'#8D6E63',
+    desc:'慢性疲勞源於細胞能量不足，人蔘、牛樟芝、馬卡、B群是恢復元氣的黃金組合。',
+    nutrients:['人蔘皂苷','牛樟芝多醣','馬卡萃取','維生素B群'],
+    products:['康采人蔘精力湯','康采牛樟芝膠囊','康采馬卡精力錠','康采超級B群錠'] },
+  weight: { label:'體重管理', emoji:'⚖️', color:'#6A1B9A',
+    desc:'健康體重管理需補充優質蛋白質增加飽足感，搭配代謝成分幫助體脂管理。',
+    nutrients:['優質蛋白質13.5g','甲殼素','法國仙人掌萃取','咖啡因'],
+    products:['康采營養蛋白飲（巧克力）','康采營養蛋白飲（香草）','康采纖盈黑咖啡'] }
+};
+
+let quizAnswers = {};
+let quizCurrentQ = 0;
+let quizStarted = false;
+
+function renderQuiz() {
+  const c = document.getElementById('quiz-container');
+  if (!quizStarted) {
+    c.innerHTML = `
+      <div style="padding:20px 16px">
+        <div style="background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 12px rgba(0,0,0,.1);margin-bottom:14px">
+          <div style="font-size:14px;font-weight:700;color:#1565C0;margin-bottom:10px">📌 測評說明</div>
+          <div style="font-size:13px;line-height:1.7;color:#555">
+            本測評包含 <strong>10個健康面向</strong>，每個問題選擇最符合您目前狀況的選項。<br><br>
+            測評結果將分析您需要特別關注的健康面向，並提供 <strong>個人化營養補充建議</strong>與推薦產品。<br><br>
+            ⚠️ 本測評僅供健康參考，不代表醫療診斷，如有疾病請諮詢專業醫師。
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+          ${quizQuestions.map(q=>`<div style="background:#fff;border-radius:10px;padding:10px;box-shadow:0 1px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:6px"><span style="font-size:18px">${q.emoji}</span><span style="font-size:12px;font-weight:600">${q.area}</span></div>`).join('')}
+        </div>
+        <button class="quiz-start-btn" onclick="startQuiz()">開始測評 →</button>
+      </div>`;
+    return;
+  }
+  if (quizCurrentQ >= quizQuestions.length) { renderResult(); return; }
+  const q = quizQuestions[quizCurrentQ];
+  const pct = Math.round((quizCurrentQ / quizQuestions.length) * 100);
+  const chosen = quizAnswers[q.id];
+  c.innerHTML = `
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-label"><span>第 ${quizCurrentQ+1} 題，共 ${quizQuestions.length} 題</span><span>${pct}%</span></div>
+      <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="quiz-q-wrap">
+      <div class="quiz-q-num">${q.emoji} ${q.area}</div>
+      <div class="quiz-q-text">${q.text}</div>
+      ${q.opts.map((o,i)=>`
+        <div class="quiz-opt ${chosen===i?'selected':''}" onclick="selectOpt(${i})">
+          <div class="quiz-opt-icon">${chosen===i?'✓':o.icon}</div>
+          <div class="quiz-opt-text">${o.text}</div>
+        </div>`).join('')}
+    </div>
+    <div class="quiz-nav-row">
+      <button class="quiz-btn quiz-btn-prev" onclick="quizPrev()" ${quizCurrentQ===0?'disabled':''}>← 上一題</button>
+      <button class="quiz-btn quiz-btn-next" onclick="quizNext()" ${chosen===undefined?'disabled':''}>
+        ${quizCurrentQ===quizQuestions.length-1?'查看結果 ✓':'下一題 →'}
+      </button>
+    </div>`;
+}
+
+function startQuiz() { quizStarted=true; quizCurrentQ=0; quizAnswers={}; renderQuiz(); window.scrollTo(0,0); }
+function selectOpt(i) {
+  quizAnswers[quizQuestions[quizCurrentQ].id] = i;
+  renderQuiz();
+}
+function quizNext() {
+  if (quizAnswers[quizQuestions[quizCurrentQ].id]===undefined) return;
+  quizCurrentQ++;
+  renderQuiz(); window.scrollTo(0,0);
+}
+function quizPrev() {
+  if (quizCurrentQ>0) { quizCurrentQ--; renderQuiz(); window.scrollTo(0,0); }
+}
+
+function renderResult() {
+  // Collect scores: 0=good,1=mild,2=moderate,3=severe
+  const areas = quizQuestions.map(q=>({ ...areaInfo[q.id], score: quizAnswers[q.id]||0 }));
+  const totalScore = areas.reduce((s,a)=>s+a.score,0);
+  const maxScore = quizQuestions.length * 3;
+  const pct = Math.round((1 - totalScore/maxScore)*100);
+  let statusEmoji, statusText, statusColor;
+  if (pct>=80){ statusEmoji='🌟'; statusText='健康狀況良好，繼續保持！'; statusColor='#2E7D32'; }
+  else if (pct>=60){ statusEmoji='😊'; statusText='整體尚可，部分面向需加強'; statusColor='#1565C0'; }
+  else if (pct>=40){ statusEmoji='😐'; statusText='多個面向需要加強保健'; statusColor='#FF8F00'; }
+  else { statusEmoji='😟'; statusText='健康警訊！建議積極補充保健'; statusColor='#E53935'; }
+
+  const sorted = [...areas].sort((a,b)=>b.score-a.score);
+  const concerns = sorted.filter(a=>a.score>0);
+
+  const c = document.getElementById('quiz-container');
+  c.innerHTML = `
+    <div class="result-hero">
+      <div style="font-size:13px;opacity:.85;margin-bottom:4px">您的健康測評結果</div>
+      <div class="result-score-ring">
+        <div class="result-score-num">${pct}</div>
+        <div class="result-score-lbl">健康指數</div>
+      </div>
+      <div style="font-size:22px;margin-top:4px">${statusEmoji}</div>
+      <div class="result-status">${statusText}</div>
+    </div>
+    <div class="result-sections">
+      ${concerns.length===0
+        ? `<div style="text-align:center;padding:30px;color:var(--text-light);font-size:14px">🎉 恭喜！您的健康狀況非常好！<br>建議持續補充基礎營養素維持現況。</div>`
+        : concerns.map(a=>{
+            const lv = a.score>=3?'lv3':a.score===2?'lv2':'lv1';
+            const lvLabel = a.score>=3?'需要立即關注':a.score===2?'建議加強補充':'可適度補充';
+            return `<div class="result-area-card ${lv}">
+              <div class="result-area-title">
+                <span>${a.emoji}</span>
+                <span>${a.label}</span>
+                <span class="result-area-badge">${lvLabel}</span>
+              </div>
+              <div class="result-area-desc">${a.desc}</div>
+              <div class="result-nutrient">建議關鍵營養素</div>
+              <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">
+                ${a.nutrients.map(n=>`<span style="font-size:11px;font-weight:600;padding:3px 9px;background:#E3F2FD;color:#1565C0;border-radius:20px">${n}</span>`).join('')}
+              </div>
+              <div class="result-nutrient">推薦康采產品</div>
+              <div class="result-prod-list">
+                ${a.products.map(p=>`<span class="result-prod-chip" onclick="searchFromResult('${p}')">${p}</span>`).join('')}
+              </div>
+            </div>`;
+          }).join('')
+      }
+      <div style="background:#E8F5E9;border-radius:12px;padding:12px 14px;margin-top:12px;font-size:12px;color:#1B5E20;line-height:1.6">
+        💡 點擊產品名稱可直接搜尋查看詳細介紹與銷售話術
+      </div>
+      <button class="result-retake" onclick="retakeQuiz()">🔄 重新測評</button>
+    </div>`;
+}
+
+function searchFromResult(productName) {
+  showSearch();
+  const input = document.getElementById('search-input');
+  input.value = productName;
+  doSearch(productName);
+}
+function retakeQuiz() { quizStarted=false; quizAnswers={}; quizCurrentQ=0; renderQuiz(); window.scrollTo(0,0); }
+function renderAssessment() { quizStarted=false; quizAnswers={}; quizCurrentQ=0; renderQuiz(); }
 function showPage(page) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
+  if(page==='assessment'){ renderQuiz(); }
   const nav = document.getElementById('nav-'+page);
   if (nav) nav.classList.add('active');
   window.scrollTo(0,0);
@@ -714,6 +1047,11 @@ function showSearch() {
 
 renderHome();
 renderDiseases();
+renderAssessment();
 </script>
 </body>
 </html>
+
+
+
+
