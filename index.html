@@ -167,6 +167,12 @@ body { font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft Jh
 .result-prod-chip { font-size:11px; font-weight:600; padding:4px 10px; background:linear-gradient(135deg,#FFF8E1,#FFECB3); color:#E65100; border:1px solid #FFB300; border-radius:20px; cursor:pointer; }
 .result-prod-chip:active { transform:scale(.97); }
 .result-retake { display:block; width:calc(100% - 32px); margin:16px auto; padding:13px; background:#F5F5F5; color:var(--text); border:none; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; }
+
+/* Buy button */
+.buy-btn-wrap { padding:0 16px 16px; margin-top:4px; }
+.buy-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:15px; background:linear-gradient(135deg,#C8102E,#E53935); color:#fff; border:none; border-radius:14px; font-size:16px; font-weight:800; text-decoration:none; font-family:inherit; cursor:pointer; box-shadow:0 4px 16px rgba(200,16,46,.35); transition:.15s; }
+.buy-btn:active { transform:scale(.97); opacity:.92; }
+.buy-btn-logo { background:#fff; border-radius:3px; padding:1px 5px; font-size:11px; font-weight:900; color:#C8102E; letter-spacing:.5px; }
 </style>
 </head>
 <body>
@@ -704,6 +710,13 @@ function showProduct(pid) {
         <div class="detail-section-title"><span>📋</span> 食用方式</div>
         <div class="usage-box"><span style="font-size:22px">💊</span><span class="usage-text">${p.usage}</span></div>
       </div>
+
+      <div class="buy-btn-wrap">
+        <a class="buy-btn" href="https://shop.avon.com.tw/shop/product/classes?level=1&id=06" target="_blank" rel="noopener">
+          <span class="buy-btn-logo">AVON</span>
+          立即前往美麗線上購 &nbsp;🛒
+        </a>
+      </div>
     </div>`;
   showPage('detail');
 }
@@ -1052,6 +1065,8 @@ renderAssessment();
 </script>
 </body>
 </html>
+
+
 
 
 
