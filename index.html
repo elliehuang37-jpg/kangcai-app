@@ -876,43 +876,43 @@ const areaInfo = {
   sleep:  { label:'睡眠品質', emoji:'🌙', color:'#5C6BC0',
     desc:'睡眠不足影響免疫、代謝與情緒。建議補充可幫助放鬆神經、促進睡眠的營養素。',
     nutrients:['GABA','茶胺酸','23種胺基酸','鈣+鎂'],
-    products:['康采睡美人胺基酸粉','康采海藻鈣錠','康采超級B群錠'] },
+    productIds:[{id:'sleeping',name:'康采睡美人胺基酸粉'},{id:'seaweed_ca',name:'康采海藻鈣錠'},{id:'super_b',name:'康采超級B群錠'}] },
   gut:    { label:'腸胃消化', emoji:'🌿', color:'#558B2F',
     desc:'腸道是第二大腦，菌叢失衡影響免疫與整體健康。需補充益生菌、酵素與膳食纖維。',
     nutrients:['益生菌','消化酵素','膳食纖維','益生元'],
-    products:['康采植物多元益生菌膠囊','康采消化酵素膠囊','康采高纖飲'] },
+    productIds:[{id:'probiotic',name:'康采五合一高機能益生菌'},{id:'enzyme',name:'康采124 YES酵素飲'},{id:'fiber',name:'康采蔬果高纖果凍飲'}] },
   immune: { label:'免疫防禦', emoji:'🛡️', color:'#2E7D32',
     desc:'免疫力是健康的第一道防線。SOD活性、多醣體、抗氧化營養素是關鍵。',
     nutrients:['SODlike活性','菌菇多醣體','沙棘萃取','維生素C'],
-    products:['康采極緻青春飲200萬活性EX','康采極緻青春飲150萬活性EX','康采活力B群緩釋錠'] },
+    productIds:[{id:'sod200',name:'康采青春飲200萬活性EX'},{id:'sod150',name:'康采青春飲150萬活性EX'},{id:'active_b',name:'康采活力B群緩釋錠'}] },
   bone:   { label:'骨骼關節', emoji:'🦴', color:'#FF8F00',
     desc:'骨骼關節需要多元營養素協同作用，單補鈣效果有限，需搭配D3、K2提升吸收。',
     nutrients:['鈣+D3+K2','葡萄糖胺','軟骨素','膠原蛋白'],
-    products:['康采優捷靈活素錠','康采海藻鈣錠','康采液態鈣','康采維生素D3錠'] },
+    productIds:[{id:'joint',name:'康采優捷強化錠'},{id:'seaweed_ca',name:'康采海藻鈣錠'},{id:'calcium_drink',name:'康采液態檸檬高鈣飲'},{id:'vit_d3',name:'康采海藻D3錠'}] },
   eye:    { label:'眼睛視力', emoji:'👀', color:'#00897B',
     desc:'藍光傷害、螢幕使用是現代眼睛最大威脅。葉黃素+玉米黃素黃金比例保護黃斑部。',
     nutrients:['葉黃素','玉米黃素','花青素','維生素A'],
-    products:['康采金盞花葉黃素玻潤飲','康采金盞花萃取菊黃素膠囊'] },
+    productIds:[{id:'lutein_drink',name:'康采金盞花葉黃素玻潤飲'},{id:'lutein_cap',name:'康采金盞花萃取葉黃素膠囊'}] },
   cardio: { label:'心血管循環', emoji:'❤️', color:'#E53935',
     desc:'心血管健康需從降低血脂、改善循環著手，紅麴、納豆激酶、Omega-3是護心三寶。',
     nutrients:['紅麴','納豆激酶','Omega-3魚油','Q10'],
-    products:['康采紅麴膠囊','康采納豆激酶膠囊','康采高濃度魚油沙棘Plus'] },
+    productIds:[{id:'hongqu',name:'康采紅麴膠囊'},{id:'natto',name:'康采日本納豆膠囊'},{id:'fish_oil',name:'康采高濃度魚油沙棘Plus'}] },
   brain:  { label:'腦力專注', emoji:'🧠', color:'#37474F',
     desc:'記憶力與專注力需要特殊腦部營養素，核桃肽與磷脂醯絲胺酸是活化腦神經的關鍵。',
     nutrients:['小分子核桃肽','磷脂醯絲胺酸(PS)','管花肉蓯蓉','B6+B12+葉酸'],
-    products:['康采好好記核桃肽錠','康采超級B群錠','康采人蔘精力湯'] },
+    productIds:[{id:'walnut',name:'康采好好記核桃肽錠'},{id:'super_b',name:'康采超級B群錠'},{id:'ginseng',name:'康采頂級活人蔘精華飲'}] },
   beauty: { label:'皮膚頭髮', emoji:'🌸', color:'#E91E63',
     desc:'由內而外的美麗需要膠原蛋白、玻尿酸、生物素等關鍵美容營養素每日補充。',
     nutrients:['膠原蛋白10000mg','玻尿酸','生物素','大豆異黃酮'],
-    products:['康采多莓萃飲膠原飲','康采玻潤雪姬','康采蜂王乳膠囊','康采黑魔法錠'] },
+    productIds:[{id:'collagen',name:'康采膠原10000美妍飲'},{id:'hyaluronic',name:'康采玻潤雪姬飲'},{id:'royaljelly',name:'康采蜂王乳升級版'},{id:'hair',name:'康采黑魔法愛心口含錠'}] },
   energy: { label:'體力活力', emoji:'⚡', color:'#8D6E63',
     desc:'慢性疲勞源於細胞能量不足，人蔘、牛樟芝、馬卡、B群是恢復元氣的黃金組合。',
     nutrients:['人蔘皂苷','牛樟芝多醣','馬卡萃取','維生素B群'],
-    products:['康采人蔘精力湯','康采牛樟芝膠囊','康采馬卡精力錠','康采超級B群錠'] },
+    productIds:[{id:'ginseng',name:'康采頂級活人蔘精華飲'},{id:'antrodia',name:'康采頂級牛樟芝精華飲'},{id:'maca',name:'康采巔峰戰力馬卡飲'},{id:'super_b',name:'康采超級B群錠'}] },
   weight: { label:'體重管理', emoji:'⚖️', color:'#6A1B9A',
     desc:'健康體重管理需補充優質蛋白質增加飽足感，搭配代謝成分幫助體脂管理。',
     nutrients:['優質蛋白質13.5g','甲殼素','法國仙人掌萃取','咖啡因'],
-    products:['康采營養蛋白飲（巧克力）','康采營養蛋白飲（香草）','康采纖盈黑咖啡'] }
+    productIds:[{id:'protein_choco',name:'康采營養蛋白飲（巧克力）'},{id:'protein_vanilla',name:'康采營養蛋白飲（香草）'},{id:'black_coffee',name:'康采纖盈黑咖啡'}] }
 };
 
 let quizAnswers = {};
@@ -1024,24 +1024,19 @@ function renderResult() {
               </div>
               <div class="result-nutrient">推薦康采產品</div>
               <div class="result-prod-list">
-                ${a.products.map(p=>`<span class="result-prod-chip" onclick="searchFromResult('${p}')">${p}</span>`).join('')}
+                ${a.productIds.map(p=>`<span class="result-prod-chip" onclick="showProduct('${p.id}')">→ ${p.name}</span>`).join('')}
               </div>
             </div>`;
           }).join('')
       }
       <div style="background:#E8F5E9;border-radius:12px;padding:12px 14px;margin-top:12px;font-size:12px;color:#1B5E20;line-height:1.6">
-        💡 點擊產品名稱可直接搜尋查看詳細介紹與銷售話術
+        💡 點擊產品名稱可直接查看詳細介紹與銷售話術
       </div>
       <button class="result-retake" onclick="retakeQuiz()">🔄 重新測評</button>
     </div>`;
 }
 
-function searchFromResult(productName) {
-  showSearch();
-  const input = document.getElementById('search-input');
-  input.value = productName;
-  doSearch(productName);
-}
+
 function retakeQuiz() { quizStarted=false; quizAnswers={}; quizCurrentQ=0; renderQuiz(); window.scrollTo(0,0); }
 function renderAssessment() { quizStarted=false; quizAnswers={}; quizCurrentQ=0; renderQuiz(); }
 function showPage(page) {
@@ -1065,6 +1060,9 @@ renderAssessment();
 </script>
 </body>
 </html>
+
+
+
 
 
 
